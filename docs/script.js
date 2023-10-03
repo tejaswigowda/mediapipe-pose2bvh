@@ -67,6 +67,7 @@ const grid = new LandmarkGrid(landmarkContainer, {
 });
 let activeEffect = 'mask';
 function onResults(results) {
+    console.log(results);
     // Hide the spinner.
     document.body.classList.add('loaded');
     // Update the frame rate.
