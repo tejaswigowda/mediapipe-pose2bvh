@@ -2,28 +2,46 @@
 <html lang="en" >
 <head>
   <meta charset="UTF-8">
-  <title>MediaPipe Pose</title>
-  <link rel="stylesheet" type="text/css"
-    href="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils_3d@0.2/landmark_grid.css" crossorigin="anonymous">
+  <title>CodePen - MediaPipe - Pose</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils_3d@0.2/landmark_grid.css" crossorigin="anonymous">
   <meta charset="utf-8">
   <link rel="icon" href="favicon.ico">
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils@0.6/control_utils.css" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils@0.6/control_utils.css" crossorigin="anonymous">
+
   <link rel="stylesheet" type="text/css" href="demo.css" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils_3d@0.2/control_utils_3d.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils@0.6/control_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.3/drawing_utils.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5/holistic.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.4/pose.js" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="./style.css">
 
 </head>
 <body>
 <!-- partial:index.partial.html -->
-<div class="container">
+<body>
+  <style>
+    .square-box {
+      width: 33%;
+      height: 0;
+      padding-top: 33%;
+      position: absolute;
+      right: 20px;
+      top: 20px;
+    }
+
+    .landmark-grid-container {
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      top:0;
+      left:0;
+      background-color: #99999999;
+    }
+  </style>
+  <div class="container">
     <video class="input_video"></video>
-    <div class="canvas-container">
-    <canvas class="output_canvas" width="1280px" height="720px">
-    </canvas>
-    </div>
+    <canvas class="output_canvas" width="1280px" height="720px"></canvas>
     <div class="loading">
       <div class="spinner"></div>
       <div class="message">
@@ -39,7 +57,7 @@
     </a>
     <div class="shoutout">
       <div>
-        <a href="https://solutions.mediapipe.dev/holistic">
+        <a href="https://solutions.mediapipe.dev/pose">
           Click here for more info
         </a>
       </div>
@@ -47,67 +65,12 @@
   </div>
   <div class="control-panel">
   </div>
+  <div class='square-box'>
+    <div class="landmark-grid-container">
+    </div>
+  </div>
 <!-- partial -->
   <script type="module" src="./script.js"></script>
 
-  </body>
-  <script>
-    processResults = (results) => {
-      console.log(results);
-      if(results.poseLandmarks){
-        var rightArmAngle = calculateRightForearmEulerAngles(results);
-        console.log(rightArmAngle.z);
-      }
-    }
-
-    function calculateRightForearmEulerAngles(results) {
-      const upperArmLandmarkIdx = {
-        shoulderl: 12, // Right shoulder
-        shoulderr: 11, // Right elbow
-        elbow: 13 // Right wrist
-      };
-
-      var sl = results.poseLandmarks[upperArmLandmarkIdx.shoulderl];
-      var sr = results.poseLandmarks[upperArmLandmarkIdx.shoulderr];
-      var elbow = results.poseLandmarks[upperArmLandmarkIdx.elbow];
-
-
-
-      const shoulderLVector = new THREE.Vector3(sl.x, sl.y, sl.z);
-      const shoulderRVector = new THREE.Vector3(sr.x, sr.y, sr.z);
-      const elbowVector = new THREE.Vector3(elbow.x, elbow.y, elbow.z);
-
-      // Calculate individual rotation angles
-
-      const xAngle = Math.acos(
-        shoulderLVector.dot(shoulderRVector) /
-        (shoulderLVector.length() * shoulderRVector.length())
-      );
-
-      const yAngle = Math.acos(
-        shoulderLVector.dot(elbowVector) /
-        (shoulderLVector.length() * elbowVector.length())
-      );
-
-      const zAngle = Math.atan2(
-        elbowVector.y - shoulderLVector.y,
-        elbowVector.x - shoulderLVector.x
-      );
-      // Apply bone length adjustments (optional)
-      // ... Replace with your bone length calculation or use pre-defined values
-
-      // Convert radians to degrees (optional)
-      const xAngleDeg = xAngle * (180 / Math.PI);
-      const yAngleDeg = yAngle * (180 / Math.PI);
-      const zAngleDeg = zAngle * (180 / Math.PI);
-
-      // Create and return Euler angles object
-      return new THREE.Euler(xAngleDeg, yAngleDeg, zAngleDeg);
-
-    }
-
-
-
-  </script>
-
+</body>
 </html>
