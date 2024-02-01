@@ -66,7 +66,7 @@ async function predictFace() {
         results = faceLandmarker.detectForVideo(video, startTimeMs);
     }
     if (results) {
-        console.log("Face:");
+        // console.log("Face:");
         console.log(results);
         faceResults = results;
 
@@ -103,7 +103,7 @@ async function predictHands() {
         results = handLandmarker.detectForVideo(video, startTimeMs);
     }
     if (results) {
-        console.log("Hands:");
+        // console.log("Hands:");
         console.log(results);
         handResults = results;
 
@@ -140,7 +140,7 @@ async function predictPose() {
         results = poseLandmarker.detectForVideo(video, startTimeMs);
     }
     if (results) {
-        console.log("Pose:");
+        // console.log("Pose:");
         console.log(results);
         poseResults = results;
 
