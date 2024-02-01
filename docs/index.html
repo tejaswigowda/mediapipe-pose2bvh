@@ -16,6 +16,24 @@ var handResults;
 var poseResults;
 </script>
 
+<style>
+  #results {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    color: black;
+  }
+
+  #results div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 200px;
+    min-height: 200px;
+    overflow-y: hidden;
+  }
+</style>
+
 </head>
 <body>
 <!-- partial:index.partial.html -->
@@ -23,8 +41,12 @@ var poseResults;
 
 
 
-  <video id="video" width="640" height="480" autoplay></video>
-  <!-- partial -->
+  <video id="video" style="width: 100vw;height:auto" autoplay></video>
+  <div id="results">
+    <div id="faceResults" style="background-color: aqua;"></div>
+    <div id="handResults" style="background-color: azure;"></div>
+    <div id="poseResults" style="background-color: cadetblue;"></div>
+  </div>
   <script type="module" src="./script.js"></script>
 
 

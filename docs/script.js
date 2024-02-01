@@ -5,6 +5,21 @@ const video = document.getElementById('video');
 video.addEventListener('play', predictEverything);
 
 function predictEverything() {
+    /*try {
+        predictFace();
+    } catch (error) {
+        predictFace();
+    }
+    try {
+        predictHands();
+    } catch (error) {
+        predictHands();
+    }
+    try {
+        predictPose();
+    } catch (error) {
+        predictPose();
+    }*/
     predictFace();
     predictHands();
     predictPose();
@@ -63,12 +78,18 @@ async function predictFace() {
     let startTimeMs = performance.now();
     if (lastVideoTime !== video.currentTime) {
         lastVideoTime = video.currentTime;
+        try{
         results = faceLandmarker.detectForVideo(video, startTimeMs);
+        }
+        catch (error){
+            predictFace();
+        }
     }
     if (results) {
         // console.log("Face:");
         console.log(results);
         faceResults = results;
+        document.getElementById("faceResults").innerText = JSON.stringify(results, null, 2);
 
     }
     window.requestAnimationFrame(predictFace);
@@ -100,12 +121,18 @@ async function predictHands() {
     let startTimeMs = performance.now();
     if (lastVideoTime1 !== video.currentTime) {
         lastVideoTime1 = video.currentTime;
-        results = handLandmarker.detectForVideo(video, startTimeMs);
+        try{
+            results = handLandmarker.detectForVideo(video, startTimeMs);
+        }
+        catch (error){
+            predictHands();
+        }
     }
     if (results) {
         // console.log("Hands:");
         console.log(results);
         handResults = results;
+        document.getElementById("handResults").innerText = JSON.stringify(results, null, 2);
 
     }
     window.requestAnimationFrame(predictHands);
@@ -137,13 +164,18 @@ async function predictPose() {
     let startTimeMs = performance.now();
     if (lastVideoTime2 !== video.currentTime) {
         lastVideoTime2 = video.currentTime;
-        results = poseLandmarker.detectForVideo(video, startTimeMs);
+        try{
+            results = poseLandmarker.detectForVideo(video, startTimeMs);
+        }
+        catch (error){
+            predictPose();
+        }
     }
     if (results) {
         // console.log("Pose:");
         console.log(results);
         poseResults = results;
-
+        document.getElementById("poseResults").innerText = JSON.stringify(results, null, 2);
     }
     window.requestAnimationFrame(predictPose);
 }
