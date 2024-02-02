@@ -370,19 +370,12 @@ function animate() {
     if (model) {
         var head = model.getObjectByName("mixamorigHead");
         if (head && facemesh) {
-            // console.log(facemesh);
             head.getWorldPosition(facemesh.position);
             head.getWorldQuaternion(facemesh.quaternion);
-
-            // facemesh.position.y += 6;
-            //  facemesh.position.z += 0;
-            //  facemesh.position.x += 0;
-
         }
     }
-    /*
 
-
+    
     if (faceResults && faceResults.faceBlendshapes && faceResults.faceBlendshapes.length > 0) {
 
         const face = scene.getObjectByName('mesh_2');
@@ -407,7 +400,7 @@ function animate() {
 
     }
 
-    */
+    
 
 
 
