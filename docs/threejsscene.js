@@ -366,7 +366,6 @@ function animate() {
     requestAnimationFrame(animate);
 
 
-    /*
 
     if (model) {
         var head = model.getObjectByName("mixamorigHead");
@@ -381,6 +380,7 @@ function animate() {
 
         }
     }
+    /*
 
 
     if (faceResults && faceResults.faceBlendshapes && faceResults.faceBlendshapes.length > 0) {
