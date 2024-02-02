@@ -1,39 +1,61 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>pose2bvh</title>
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils_3d@0.2/landmark_grid.css" crossorigin="anonymous">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-<script>
-var faceLandmarker;
-var handLandmarker;
-var poseLandmarker;
-var faceResults;
-var handResults;
-var poseResults;
-</script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-<style>
-  #results {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    color: black;
-  }
+  <script>
+    var faceLandmarker;
+    var handLandmarker;
+    var poseLandmarker;
+    var faceResults;
+    var handResults;
+    var poseResults;
 
-  #results div {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    max-height: 200px;
-    min-height: 200px;
-    overflow-y: hidden;
-  }
-</style>
+    let camera, scene, renderer, stats;
+    var model;
+    var animation;
+    var animationDuration;
+    let camera_bvh, controls_bvh, scene_bvh, renderer_bvh;
+    let mixer_bvh, skeletonHelper_bvh;
+
+    var args = window.location.hash.replace("#", "").split(",");
+    var fbxfile = args[0] || "ybot.fbx";
+    var trackingLine;
+    var line_tracker = []; // Start with an empty array
+
+
+    var facemesh;
+
+  </script>
+
+  <style>
+    #results {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      color: black;
+    }
+
+    #results div {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      max-height: 200px;
+      min-height: 200px;
+      overflow-y: hidden;
+    }
+  </style>
 
 </head>
+
 <body style="margin: 0;">
 
   <video id="video" style="width: 100vw;max-width:400px;height:auto" autoplay></video>
@@ -44,6 +66,8 @@ var poseResults;
   </div>
 
   <script type="module" src="./script.js"></script>
+  <script type="module" src="threejsscene.js"></script>
 
 </body>
+
 </html>

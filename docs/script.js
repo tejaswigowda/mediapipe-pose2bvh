@@ -87,7 +87,7 @@ async function predictFace() {
     }
     if (results) {
         // console.log("Face:");
-        console.log(results);
+        // console.log(results);
         faceResults = results;
         document.getElementById("faceResults").innerText = JSON.stringify(results, null, 2);
 
@@ -130,7 +130,7 @@ async function predictHands() {
     }
     if (results) {
         // console.log("Hands:");
-        console.log(results);
+        // console.log(results);
         handResults = results;
         document.getElementById("handResults").innerText = JSON.stringify(results, null, 2);
 
@@ -173,7 +173,7 @@ async function predictPose() {
     }
     if (results) {
         // console.log("Pose:");
-        console.log(results);
+        // console.log(results);
         poseResults = results;
         document.getElementById("poseResults").innerText = JSON.stringify(results, null, 2);
     }
