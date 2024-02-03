@@ -397,6 +397,13 @@ function animate() {
 
     }
 
+
+    if (handResults && handResults.multiHandLandmarks && handResults.multiHandLandmarks.length > 0) {
+    }
+
+    if(poseResults && poseResults.poseLandmarks && poseResults.poseLandmarks.length > 0){
+    }
+    
     
 
 
