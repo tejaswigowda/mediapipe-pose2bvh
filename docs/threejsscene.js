@@ -391,6 +391,16 @@ function animate() {
         }
         // map face orientaion to head
 
+        var faceOrientation = faceResults.facialTransformationMatrixes[0];
+        var faceOrientationMatrix = new THREE.Matrix4();
+        faceOrientationMatrix.fromArray(faceOrientation.data);
+        var faceOrientationQuaternion = new THREE.Quaternion();
+        faceOrientationMatrix.decompose(new THREE.Vector3(), faceOrientationQuaternion, new THREE.Vector3());
+        //console.log(faceOrientationMatrix, faceOrientationQuaternion);
+        var head = model.getObjectByName("mixamorigHead");
+        head.quaternion.set(faceOrientationQuaternion.x, faceOrientationQuaternion.y, faceOrientationQuaternion.z, faceOrientationQuaternion.w);
+
+
 
              
         
