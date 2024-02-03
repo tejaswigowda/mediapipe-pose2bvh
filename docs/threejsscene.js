@@ -379,24 +379,21 @@ function animate() {
     if (faceResults && faceResults.faceBlendshapes && faceResults.faceBlendshapes.length > 0) {
 
         const face = scene.getObjectByName('mesh_2');
-        // console.log(faceResults.faceBlendshapes[0].categories);
-
         const faceBlendshapes = faceResults.faceBlendshapes[0].categories;
-
         for (const blendshape of faceBlendshapes) {
-
             const categoryName = blendshape.categoryName;
             const score = blendshape.score;
-
             const index = face.morphTargetDictionary[blendshapesMap[categoryName]];
 
             if (index !== undefined) {
-
                 face.morphTargetInfluences[index] = score;
-
             }
-
         }
+        // map face orientaion to head
+
+
+             
+        
 
     }
 
