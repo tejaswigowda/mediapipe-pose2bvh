@@ -399,12 +399,6 @@ function animate() {
         //console.log(faceOrientationMatrix, faceOrientationQuaternion);
         var head = model.getObjectByName("mixamorigHead");
         head.quaternion.set(faceOrientationQuaternion.x, faceOrientationQuaternion.y, faceOrientationQuaternion.z, faceOrientationQuaternion.w);
-
-
-
-             
-        
-
     }
 
 
