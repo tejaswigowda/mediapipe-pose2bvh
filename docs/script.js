@@ -60,7 +60,6 @@ async function createFaceLandmarker() {
         },
         outputFaceBlendshapes: true,
         outputFaceGeometry: true,
-        output_facial_transformation_matrixes: true,
         outputFacialTransformationMatrixes: true,
         runningMode: "VIDEO",
         numFaces: 1
