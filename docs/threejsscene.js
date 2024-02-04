@@ -350,6 +350,20 @@ function init() {
                 document.getElementById("splashScreen").style.display = "none";
             }, 3000);
             */
+
+            // add cylinder for each bone
+
+            var bones = Object.keys(boneCylinders);
+            for (var i = 0; i < bones.length; i++) {
+                boneCylinders[bones[i]] = new THREE.Mesh(
+                    new THREE.CylinderGeometry(1, 1, 1, 32),
+                    new THREE.MeshBasicMaterial({ color: 0xffff00 })
+                );
+                boneCylinders[bones[i]].visible = true;
+                scene.add(boneCylinders[bones[i]]);
+            }
+
+
         });
 }
 
@@ -405,7 +419,36 @@ function animate() {
     if (handResults && handResults.multiHandLandmarks && handResults.multiHandLandmarks.length > 0) {
     }
 
-    if(poseResults && poseResults.poseLandmarks && poseResults.poseLandmarks.length > 0){
+    if(poseResults && poseResults.worldLandmarks && poseResults.worldLandmarks.length > 0){
+        // position bones
+
+        var landmarks = poseResults.worldLandmarks[0];
+
+
+        var spine = model.getObjectByName("mixamorigSpine");
+        var spQ = spine.quaternion; // spine quaternion
+   
+
+        var leftUpperArm = model.getObjectByName("mixamorigLeftArm");
+        // get the quaternion of the left upper arm from pose and spine quaternion
+        var q = new THREE.Quaternion();
+        q.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(landmarks[13].x - landmarks[11].x, landmarks[13].y - landmarks[11].y, landmarks[13].z - landmarks[11].z).normalize());
+        q.multiply(spQ);
+        leftUpperArm.quaternion.set(q.x, q.y, q.z, q.w);
+
+        var rightUpperArm = model.getObjectByName("mixamorigRightArm");
+        // get the quaternion of the right upper arm from pose and spine quaternion
+        q = new THREE.Quaternion();
+        q.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(landmarks[14].x - landmarks[12].x, landmarks[14].y - landmarks[12].y, landmarks[14].z - landmarks[12].z).normalize());
+        q.multiply(spQ);
+        rightUpperArm.quaternion.set(q.x, q.y, q.z, q.w);
+        
+
+
+ 
+
+        
+
     }
     
     
