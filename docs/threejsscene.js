@@ -388,6 +388,7 @@ function mapHandLandmarks(landmarks, h) {
 
     var handLandmarksMap = hand === "Right" ? handLandmarksMapRight : handLandmarksMapLeft;
 
+    /*
     // map wrist rotation 
     var wrist = model.getObjectByName("mixamorig" + hand + "Hand");
     var wristQuaternion = new THREE.Quaternion();
@@ -400,6 +401,7 @@ function mapHandLandmarks(landmarks, h) {
     // map finger rotations
     var fingers = ["thumb", "index", "middle", "ring", "pinky"];
 
+    */
 
 }
 
@@ -489,7 +491,7 @@ function animate() {
         //q.multiply(spQ);
         rightUpperArm.quaternion.set(q.x, q.y, q.z, q.w);
 
-
+/*
         var leftLowerArm = model.getObjectByName("mixamorigLeftForeArm");
         // get the quaternion of the left lower arm from pose and left upper arm quaternion
         q = new THREE.Quaternion();
@@ -546,6 +548,7 @@ function animate() {
         q.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(landmarks[28].x - landmarks[26].x, landmarks[28].y - landmarks[26].y, landmarks[28].z - landmarks[26].z).normalize());
         q.multiply(rightLowerLeg.quaternion);
         rightFoot.quaternion.set(q.x, q.y, q.z, q.w);
+        */
 
     }
 
