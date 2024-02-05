@@ -55,84 +55,17 @@ const blendshapesMap = {
     // '': 'tongueOut'
 };
 
-
-function mapHandLandmarks(landmarks, hand) {
-    var x = calculateAngle(landmarks[0][6], landmarks[0][7], landmarks[0][8]);
-    var index3 = model.getObjectByName("mixamorig" + hand + "HandIndex3");
-    index3.rotation.set(0, 0, x * Math.PI/180, "XYZ");
-    
-    x = calculateAngle(landmarks[0][5], landmarks[0][6], landmarks[0][7]);
-    var index2 = model.getObjectByName("mixamorig" + hand + "HandIndex2");
-    index2.rotation.set(0, 0, x * Math.PI/180, "XYZ");
-
-    x = calculateAngle(landmarks[0][0], landmarks[0][5], landmarks[0][6]);
-    var index1 = model.getObjectByName("mixamorig" + hand + "HandIndex1");
-    index1.rotation.set(0, 0, x * Math.PI/180, "XYZ");
-
-    x = calculateAngle(landmarks[0][10], landmarks[0][11], landmarks[0][12]);
-    var middle3 = model.getObjectByName("mixamorig" + hand + "HandMiddle3");
-    middle3.rotation.set(0, 0, x * Math.PI/180, "XYZ");
-
-    x = calculateAngle(landmarks[0][9], landmarks[0][10], landmarks[0][11]);
-    var middle2 = model.getObjectByName("mixamorig" + hand + "HandMiddle2");
-    middle2.rotation.set(0, 0, x * Math.PI/180, "XYZ");
-
-    x = calculateAngle(landmarks[0][0], landmarks[0][9], landmarks[0][10]);
-    var middle1 = model.getObjectByName("mixamorig" + hand + "HandMiddle1");
-    middle1.rotation.set(0, 0, x * Math.PI/180, "XYZ");
-
-    x = calculateAngle(landmarks[0][14], landmarks[0][15], landmarks[0][16]);
-    var ring3 = model.getObjectByName("mixamorig" + hand + "HandRing3");
-    ring3.rotation.set(0, 0, x * Math.PI/180, "XYZ");
-
-    x = calculateAngle(landmarks[0][13], landmarks[0][14], landmarks[0][15]);
-    var ring2 = model.getObjectByName("mixamorig" + hand + "HandRing2");
-    ring2.rotation.set(0, 0, x * Math.PI/180, "XYZ");
-
-    x = calculateAngle(landmarks[0][0], landmarks[0][13], landmarks[0][14]);
-    var ring1 = model.getObjectByName("mixamorig" + hand + "HandRing1");
-    ring1.rotation.set(0, 0, x * Math.PI/180, "XYZ");
-
-    x = calculateAngle(landmarks[0][18], landmarks[0][19], landmarks[0][20]);
-    var pinky3 = model.getObjectByName("mixamorig" + hand + "HandPinky3");
-    pinky3.rotation.set(0, 0, x * Math.PI/180, "XYZ");
-
-    x = calculateAngle(landmarks[0][17], landmarks[0][18], landmarks[0][19]);
-    var pinky2 = model.getObjectByName("mixamorig" + hand + "HandPinky2");
-    pinky2.rotation.set(0, 0, x * Math.PI/180, "XYZ");
-
-    x = calculateAngle(landmarks[0][0], landmarks[0][17], landmarks[0][18]);
-    var pinky1 = model.getObjectByName("mixamorig" + hand + "HandPinky1");
-    pinky1.rotation.set(0, 0, x * Math.PI/180, "XYZ");
-
-    x = calculateAngle(landmarks[0][2], landmarks[0][3], landmarks[0][4]);
-    var thumb3 = model.getObjectByName("mixamorig" + hand + "HandThumb3");
-    thumb3.rotation.set(0, 0, x * Math.PI/180, "XYZ");
-
-    x = calculateAngle(landmarks[0][1], landmarks[0][2], landmarks[0][3]);
-    var thumb2 = model.getObjectByName("mixamorig" + hand + "HandThumb2");
-    thumb2.rotation.set(0, 0, x * Math.PI/180, "XYZ");
-
-    x = calculateAngle(landmarks[0][5], landmarks[0][0], landmarks[0][1]);
-    var thumb1 = model.getObjectByName("mixamorig" + hand + "HandThumb1");
-    thumb1.rotation.set(0,  -x * Math.PI/180, 0, "XYZ");
-
-
-
-
-
-}
 function calculateAngle(landmarkA, landmarkB, landmarkC) {
     const vectorAB = { x: landmarkB.x - landmarkA.x, y: landmarkB.y - landmarkA.y, z: landmarkB.z - landmarkA.z };
     const vectorBC = { x: landmarkC.x - landmarkB.x, y: landmarkC.y - landmarkB.y, z: landmarkC.z - landmarkB.z };
-  
+
     const dotProduct = vectorAB.x * vectorBC.x + vectorAB.y * vectorBC.y + vectorAB.z * vectorBC.z;
-    const magnitudeAB = Math.sqrt(vectorAB.x**2 + vectorAB.y**2 + vectorAB.z**2);
-    const magnitudeBC = Math.sqrt(vectorBC.x**2 + vectorBC.y**2 + vectorBC.z**2);
-  
+    const magnitudeAB = Math.sqrt(vectorAB.x ** 2 + vectorAB.y ** 2 + vectorAB.z ** 2);
+    const magnitudeBC = Math.sqrt(vectorBC.x ** 2 + vectorBC.y ** 2 + vectorBC.z ** 2);
+
     const angle = Math.acos(dotProduct / (magnitudeAB * magnitudeBC));
     return angle * (180 / Math.PI); // Convert from radians to degrees
-  }
+}
 
 
 
@@ -180,9 +113,9 @@ $('#ext').fadeOut(0);
 
 function init() {
     // init modal
-   // var elems = document.querySelectorAll('.modal');
-   // var instances = M.Modal.init(elems, {});
-   // manageModal = instances[0];
+    // var elems = document.querySelectorAll('.modal');
+    // var instances = M.Modal.init(elems, {});
+    // manageModal = instances[0];
 
 
     const container = document.createElement("div");
@@ -275,11 +208,11 @@ function init() {
         // console.log(mixer);
         object.traverse(function (child) {
             // console.log(child);
-            if(child.name === "mixamorigHead"){
+            if (child.name === "mixamorigHead") {
                 child.traverse(function (child1) {
-                   child1.scale.set(.9, .85, .67);
+                    child1.scale.set(.9, .85, .67);
                 });
-                
+
             }
             if (child.isMesh) {
                 //child.castShadow = true;
@@ -344,12 +277,12 @@ function init() {
             controls.update();
 
             window.addEventListener("resize", onWindowResize, false);
-/*
-            document.getElementById("splashScreen").style.opacity = "0";
-            setTimeout(function () {
-                document.getElementById("splashScreen").style.display = "none";
-            }, 3000);
-            */
+            /*
+                        document.getElementById("splashScreen").style.opacity = "0";
+                        setTimeout(function () {
+                            document.getElementById("splashScreen").style.display = "none";
+                        }, 3000);
+                        */
 
             // add cylinder for each bone
 
@@ -375,6 +308,101 @@ function onWindowResize() {
 }
 
 //
+function mapHandLandmarks(landmarks, h) {
+
+    var hand = h[0].categoryName;
+    console.log(handResults, landmarks, hand);
+    // map hand landmarks to model
+    var handLandmarks = landmarks;
+    var handLandmarksMap = {
+        "wrist": 0,
+        "thumb1": 1,
+        "thumb2": 2,
+        "thumb3": 3,
+        "thumb4": 4,
+        "index1": 5,
+        "index2": 6,
+        "index3": 7,
+        "index4": 8,
+        "middle1": 9,
+        "middle2": 10,
+        "middle3": 11,
+        "middle4": 12,
+        "ring1": 13,
+        "ring2": 14,
+        "ring3": 15,
+        "ring4": 16,
+        "pinky1": 17,
+        "pinky2": 18,
+        "pinky3": 19,
+        "pinky4": 20
+    };
+
+    var handLandmarksMapRight = {
+        "wrist": 0,
+        "thumb1": 1,
+        "thumb2": 2,
+        "thumb3": 3,
+        "thumb4": 4,
+        "index1": 5,
+        "index2": 6,
+        "index3": 7,
+        "index4": 8,
+        "middle1": 9,
+        "middle2": 10,
+        "middle3": 11,
+        "middle4": 12,
+        "ring1": 13,
+        "ring2": 14,
+        "ring3": 15,
+        "ring4": 16,
+        "pinky1": 17,
+        "pinky2": 18,
+        "pinky3": 19,
+        "pinky4": 20
+    };
+
+    var handLandmarksMapLeft = {
+        "wrist": 0,
+        "thumb1": 1,
+        "thumb2": 2,
+        "thumb3": 3,
+        "thumb4": 4,
+        "index1": 5,
+        "index2": 6,
+        "index3": 7,
+        "index4": 8,
+        "middle1": 9,
+        "middle2": 10,
+        "middle3": 11,
+        "middle4": 12,
+        "ring1": 13,
+        "ring2": 14,
+        "ring3": 15,
+        "ring4": 16,
+        "pinky1": 17,
+        "pinky2": 18,
+        "pinky3": 19,
+        "pinky4": 20
+    };
+
+    var handLandmarksMap = hand === "Right" ? handLandmarksMapRight : handLandmarksMapLeft;
+
+    // map wrist rotation 
+    var wrist = model.getObjectByName("mixamorig" + hand + "Hand");
+    var wristQuaternion = new THREE.Quaternion();
+    var wristRotation = handLandmarks[handLandmarksMap["wrist"]];
+    var wristRotationMatrix = new THREE.Matrix4();
+    wristRotationMatrix.lookAt(new THREE.Vector3(), new THREE.Vector3(wristRotation.x, wristRotation.y, wristRotation.z), new THREE.Vector3(0, 1, 0));
+    wristQuaternion.setFromRotationMatrix(wristRotationMatrix);
+    wrist.quaternion.set(wristQuaternion.x, wristQuaternion.y, wristQuaternion.z, wristQuaternion.w);
+
+    // map finger rotations
+    var fingers = ["thumb", "index", "middle", "ring", "pinky"];
+
+
+}
+
 
 function animate() {
     requestAnimationFrame(animate);
@@ -389,7 +417,7 @@ function animate() {
         }
     }
 
-    
+
     if (faceResults && faceResults.faceBlendshapes && faceResults.faceBlendshapes.length > 0) {
 
         const face = scene.getObjectByName('mesh_2');
@@ -416,10 +444,28 @@ function animate() {
     }
 
 
-    if (handResults && handResults.multiHandLandmarks && handResults.multiHandLandmarks.length > 0) {
+    if (handResults && handResults.landmarks && handResults.landmarks.length > 0) {
+        var landmarks = handResults.landmarks[0];
+        try {
+            mapHandLandmarks(landmarks, handResults.handednesses[0]);
+        }
+        catch (error) {
+            console.log(error);
+        }
+
+        if (handResults.landmarks.length > 1) {
+            landmarks = handResults.landmarks[1];
+            try {
+                mapHandLandmarks(landmarks, landmarks.handednesses[1]);
+            }
+            catch (error) {
+                console.log(error);
+            }
+        }
     }
 
-    if(poseResults && poseResults.worldLandmarks && poseResults.worldLandmarks.length > 0){
+
+    if (poseResults && poseResults.worldLandmarks && poseResults.worldLandmarks.length > 0) {
         // position bones
 
         var landmarks = poseResults.worldLandmarks[0];
@@ -427,43 +473,87 @@ function animate() {
 
         var spine = model.getObjectByName("mixamorigSpine");
         var spQ = spine.quaternion; // spine quaternion
-   
+
 
         var leftUpperArm = model.getObjectByName("mixamorigLeftArm");
         // get the quaternion of the left upper arm from pose and spine quaternion
         var q = new THREE.Quaternion();
         q.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(landmarks[13].x - landmarks[11].x, landmarks[13].y - landmarks[11].y, landmarks[13].z - landmarks[11].z).normalize());
-        q.multiply(spQ);
+        //q.multiply(spQ);
         leftUpperArm.quaternion.set(q.x, q.y, q.z, q.w);
 
         var rightUpperArm = model.getObjectByName("mixamorigRightArm");
         // get the quaternion of the right upper arm from pose and spine quaternion
         q = new THREE.Quaternion();
         q.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(landmarks[14].x - landmarks[12].x, landmarks[14].y - landmarks[12].y, landmarks[14].z - landmarks[12].z).normalize());
-        q.multiply(spQ);
+        //q.multiply(spQ);
         rightUpperArm.quaternion.set(q.x, q.y, q.z, q.w);
-        
 
 
- 
+        var leftLowerArm = model.getObjectByName("mixamorigLeftForeArm");
+        // get the quaternion of the left lower arm from pose and left upper arm quaternion
+        q = new THREE.Quaternion();
+        q.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(landmarks[15].x - landmarks[13].x, landmarks[15].y - landmarks[13].y, landmarks[15].z - landmarks[13].z).normalize());
+        q.multiply(leftUpperArm.quaternion);
+        leftLowerArm.quaternion.set(q.x, q.y, q.z, q.w);
 
-        
+        var rightLowerArm = model.getObjectByName("mixamorigRightForeArm");
+        // get the quaternion of the right lower arm from pose and right upper arm quaternion
+        q = new THREE.Quaternion();
+        q.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(landmarks[16].x - landmarks[14].x, landmarks[16].y - landmarks[14].y, landmarks[16].z - landmarks[14].z).normalize());
+        q.multiply(rightUpperArm.quaternion);
+        rightLowerArm.quaternion.set(q.x, q.y, q.z, q.w);
+
+
+        var leftUpperLeg = model.getObjectByName("mixamorigLeftUpLeg");
+        // get the quaternion of the left upper leg from pose and spine quaternion
+        q = new THREE.Quaternion();
+        q.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(landmarks[23].x - landmarks[11].x, landmarks[23].y - landmarks[11].y, landmarks[23].z - landmarks[11].z).normalize());
+        q.multiply(spQ);
+        leftUpperLeg.quaternion.set(q.x, q.y, q.z, q.w);
+
+        var rightUpperLeg = model.getObjectByName("mixamorigRightUpLeg");
+        // get the quaternion of the right upper leg from pose and spine quaternion
+        q = new THREE.Quaternion();
+        q.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(landmarks[24].x - landmarks[12].x, landmarks[24].y - landmarks[12].y, landmarks[24].z - landmarks[12].z).normalize());
+        q.multiply(spQ);
+        rightUpperLeg.quaternion.set(q.x, q.y, q.z, q.w);
+
+        var leftLowerLeg = model.getObjectByName("mixamorigLeftLeg");
+        // get the quaternion of the left lower leg from pose and left upper leg quaternion
+        q = new THREE.Quaternion();
+        q.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(landmarks[25].x - landmarks[23].x, landmarks[25].y - landmarks[23].y, landmarks[25].z - landmarks[23].z).normalize());
+        q.multiply(leftUpperLeg.quaternion);
+        leftLowerLeg.quaternion.set(q.x, q.y, q.z, q.w);
+
+        var rightLowerLeg = model.getObjectByName("mixamorigRightLeg");
+        // get the quaternion of the right lower leg from pose and right upper leg quaternion
+        q = new THREE.Quaternion();
+        q.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(landmarks[26].x - landmarks[24].x, landmarks[26].y - landmarks[24].y, landmarks[26].z - landmarks[24].z).normalize());
+        q.multiply(rightUpperLeg.quaternion);
+        rightLowerLeg.quaternion.set(q.x, q.y, q.z, q.w);
+
+        var leftFoot = model.getObjectByName("mixamorigLeftFoot");
+        // get the quaternion of the left foot from pose and left lower leg quaternion
+        q = new THREE.Quaternion();
+        q.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(landmarks[27].x - landmarks[25].x, landmarks[27].y - landmarks[25].y, landmarks[27].z - landmarks[25].z).normalize());
+        q.multiply(leftLowerLeg.quaternion);
+        leftFoot.quaternion.set(q.x, q.y, q.z, q.w);
+
+        var rightFoot = model.getObjectByName("mixamorigRightFoot");
+        // get the quaternion of the right foot from pose and right lower leg quaternion
+        q = new THREE.Quaternion();
+        q.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(landmarks[28].x - landmarks[26].x, landmarks[28].y - landmarks[26].y, landmarks[28].z - landmarks[26].z).normalize());
+        q.multiply(rightLowerLeg.quaternion);
+        rightFoot.quaternion.set(q.x, q.y, q.z, q.w);
 
     }
-    
-    
-
-
-
-
-
-
-    
 
     renderer.render(scene, camera);
 
     // stats.update();
 }
+
 function init_bvh() {
     // camera_bvh = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
     // camera_bvh.position.set( 0, 200, 300 );
