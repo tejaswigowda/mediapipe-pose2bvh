@@ -486,59 +486,21 @@ function animate() {
         var leftElbow = new THREE.Vector3(landmarks[13].x, landmarks[13].y, landmarks[13].z);
         var rightWrist = new THREE.Vector3(landmarks[16].x, landmarks[16].y, landmarks[16].z);
         var leftWrist = new THREE.Vector3(landmarks[15].x, landmarks[15].y, landmarks[15].z);
-
-        // Calculate vectors
-        var chestVector = new THREE.Vector3().subVectors(rightShoulder, leftShoulder).normalize();
-        var rightArmVector = new THREE.Vector3().subVectors(rightWrist, rightShoulder).normalize();
-        var leftArmVector = new THREE.Vector3().subVectors(leftWrist, leftShoulder).normalize();
-
-        // Assuming the reference direction is the positive Y-axis
-        var referenceDirection = new THREE.Vector3(0, 1, 0);
-
-        // Create quaternions for the arm vectors
-        var rightArmQuaternion = new THREE.Quaternion().setFromUnitVectors(referenceDirection, rightArmVector);
-        var leftArmQuaternion = new THREE.Quaternion().setFromUnitVectors(referenceDirection, leftArmVector);
-
-        // Similarly, for chest orientation, if needed
-        var chestQuaternion = new THREE.Quaternion().setFromUnitVectors(referenceDirection, chestVector);
-
-        // Apply the quaternions to the bones
-        // var rightUpperArm = model.getObjectByName("mixamorigRightArm");
-        // var leftUpperArm = model.getObjectByName("mixamorigLeftArm");
-        // rightUpperArm.quaternion.set(rightArmQuaternion.x, rightArmQuaternion.z, rightArmQuaternion.y, rightArmQuaternion.w);
-        // leftUpperArm.quaternion.set(leftArmQuaternion.x, leftArmQuaternion.y, leftArmQuaternion.z, leftArmQuaternion.w);
-
-
         var spine = model.getObjectByName("mixamorigSpine");
         var spQ = spine.quaternion; // Spine quaternion
-
-        // var leftUpperArm = model.getObjectByName("mixamorigLeftArm");
-        // var directionVector = new THREE.Vector3(landmarks[13].x - landmarks[11].x, landmarks[13].y - landmarks[11].y, landmarks[13].z - landmarks[11].z).normalize();
-        // var referenceVector = new THREE.Vector3(1, 0, 0); // Assuming arm's neutral position aligns with the x-axis
-
-        // // Calculate quaternion for arm's current orientation
-        // var q = new THREE.Quaternion().setFromUnitVectors(referenceVector, directionVector);
-        // q.multiply(spQ); // Adjust by spine's orientation
-        // leftUpperArm.quaternion.set(q.x, -q.y, -q.z, q.w); // Apply quaternion to the model
 
         var leftUpperArm = model.getObjectByName("mixamorigLeftArm");
         // get the quaternion of the right upper arm from pose and spine quaternion
         var q = new THREE.Quaternion();
         q.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(landmarks[13].x - landmarks[11].x, landmarks[13].y - landmarks[11].y, landmarks[13].z - landmarks[11].z).normalize());
         q.multiply(new THREE.Quaternion(0, 0, 0, 1));
-        // get euler from quaternion
-        // var euler = new THREE.Euler().setFromQuaternion(q);
-
-        leftUpperArm.quaternion.set(q.w, q.x, -q.z, q.y);
+        leftUpperArm.quaternion.set(q.w, q.x, -q.z, -q.y);
         
         var rightUpperArm = model.getObjectByName("mixamorigRightArm");
         // get the quaternion of the right upper arm from pose and spine quaternion
         var q = new THREE.Quaternion();
         q.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(landmarks[14].x - landmarks[12].x, landmarks[14].y - landmarks[12].y, landmarks[14].z - landmarks[12].z).normalize());
         q.multiply(new THREE.Quaternion(0, 0, 0, 1));
-        // get euler from quaternion
-        // var euler = new THREE.Euler().setFromQuaternion(q);
-
         rightUpperArm.quaternion.set(q.w, -q.x, -q.z, -q.y);
 
         
