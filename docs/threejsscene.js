@@ -510,17 +510,16 @@ function animate() {
 
 
         var spine = model.getObjectByName("mixamorigSpine");
-        var spQ = spine.quaternion; // spine quaternion
-
         var spQ = spine.quaternion; // Spine quaternion
 
         var leftUpperArm = model.getObjectByName("mixamorigLeftArm");
-        // get the quaternion of the left upper arm from pose and spine quaternion
-        var q = new THREE.Quaternion();
-        q.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(landmarks[13].x - landmarks[11].x, landmarks[13].y - landmarks[11].y, landmarks[13].z - landmarks[11].z).normalize());
-        q.multiply(spQ);
-        // map to model
-        leftUpperArm.quaternion.set(q.x, q.y, q.z, q.w);
+        var directionVector = new THREE.Vector3(landmarks[13].x - landmarks[11].x, landmarks[13].y - landmarks[11].y, landmarks[13].z - landmarks[11].z).normalize();
+        var referenceVector = new THREE.Vector3(1, 0, 0); // Assuming arm's neutral position aligns with the x-axis
+
+        // Calculate quaternion for arm's current orientation
+        var q = new THREE.Quaternion().setFromUnitVectors(referenceVector, directionVector);
+        q.multiply(spQ); // Adjust by spine's orientation
+        leftUpperArm.quaternion.set(q.x, -q.y, -q.z, q.w); // Apply quaternion to the model
         /*
         var rightUpperArm = model.getObjectByName("mixamorigRightArm");
         // get the quaternion of the right upper arm from pose and spine quaternion
