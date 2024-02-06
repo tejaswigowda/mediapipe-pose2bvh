@@ -588,7 +588,7 @@ function animate() {
         rightFoot.quaternion.set(q.x, q.y, q.z, q.w);
         */
 
-    }
+    
         var directionVector = new THREE.Vector3(landmarks[13].x - landmarks[11].x, landmarks[13].y - landmarks[11].y, landmarks[13].z - landmarks[11].z).normalize();
         var referenceVector = new THREE.Vector3(1, 0, 0); // Assuming arm's neutral position aligns with the x-axis
 
