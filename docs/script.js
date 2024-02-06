@@ -1,6 +1,16 @@
-// get webcam feed and display it in the video element
+// run http server with service worker
 
-// get the video element
+// register service worker
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js')
+        .then((reg) => {
+            console.log('Service worker registered.', reg);
+        });
+}
+
+
+
+
 const video = document.getElementById('video');
 video.addEventListener('play', predictEverything);
 
