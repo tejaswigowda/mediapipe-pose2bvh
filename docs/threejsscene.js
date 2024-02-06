@@ -501,7 +501,7 @@ function animate() {
         var q = new THREE.Quaternion();
         q.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(landmarks[14].x - landmarks[12].x, landmarks[14].y - landmarks[12].y, landmarks[14].z - landmarks[12].z).normalize());
         q.multiply(new THREE.Quaternion(0, 0, 0, 1));
-        rightUpperArm.quaternion.set(q.w, -q.x, -q.z, -q.y);
+        rightUpperArm.quaternion.set(q.w, -q.x, -q.z, q.y);
 
         
 /*
