@@ -524,12 +524,12 @@ function animate() {
         var leftUpperArm = model.getObjectByName("mixamorigLeftArm");
         // get the quaternion of the right upper arm from pose and spine quaternion
         var q = new THREE.Quaternion();
-        q.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(landmarks[14].x - landmarks[12].x, landmarks[14].y - landmarks[12].y, landmarks[14].z - landmarks[12].z).normalize());
+        q.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(landmarks[13].x - landmarks[11].x, landmarks[13].y - landmarks[11].y, landmarks[13].z - landmarks[11].z).normalize());
         q.multiply(new THREE.Quaternion(0, 0, 0, 1));
         // get euler from quaternion
         // var euler = new THREE.Euler().setFromQuaternion(q);
 
-        leftUpperArm.quaternion.set(q.w, q.x, -q.z, -q.y);
+        leftUpperArm.quaternion.set(q.w, q.x, -q.z, q.y);
         
         var rightUpperArm = model.getObjectByName("mixamorigRightArm");
         // get the quaternion of the right upper arm from pose and spine quaternion
