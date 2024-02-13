@@ -68,6 +68,7 @@ async function createFaceLandmarker() {
             modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task',
             delegate: "GPU"
         },
+        modelComplexity: 1,
         outputFaceBlendshapes: true,
         outputFaceGeometry: true,
         output_facial_transformation_matrixes: true,
@@ -114,6 +115,7 @@ async function createHandLandmarker() {
             modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task',
             delegate: "GPU"
         },
+        modelComplexity: 1,
         runningMode: "VIDEO",
         numHands: 2
     });
@@ -157,8 +159,15 @@ async function createPoseLandmarker() {
             modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task',
             delegate: "GPU"
         },
+        modelComplexity: 1,
         runningMode: "VIDEO",
-        smoothLandmarks: true
+        smoothLandmarks: true,
+        enableSegmentation: true,
+        smoothSegmentation: true,
+        smoothLandmarksOptions: {
+            windowSize: 5,
+            sigma: 1.0
+        }
     });
 }
 
