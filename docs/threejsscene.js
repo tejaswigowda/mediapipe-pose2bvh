@@ -671,13 +671,13 @@ function animate() {
         const jointHead = newJoints3D["head"];
         const boneNeck = model.getObjectByName("mixamorigNeck");
         const boneHead = model.getObjectByName("mixamorigHead");
-        SetRbyCalculatingJoints(
+        /*SetRbyCalculatingJoints(
             jointNeck,
             jointHead,
             boneNeck,
             boneHead,
             R_chain_neck
-        );
+        );*/
 
         // Left shoulder-elbow-wrist
         R_chain_leftupper = new THREE.Matrix4().identity();
