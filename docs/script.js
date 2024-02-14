@@ -51,10 +51,7 @@ import vision from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3"
 
 import {
     FilesetResolver,
-    DrawingUtils,
     FaceLandmarker,
-    HandLandmarker,
-    PoseLandmarker,
 } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3";
 
 
@@ -87,10 +84,10 @@ async function predictFace() {
     let startTimeMs = performance.now();
     if (lastVideoTime !== video.currentTime) {
         lastVideoTime = video.currentTime;
-        try{
-        results = faceLandmarker.detectForVideo(video, startTimeMs);
+        try {
+            results = faceLandmarker.detectForVideo(video, startTimeMs);
         }
-        catch (error){
+        catch (error) {
             predictFace();
         }
     }
@@ -105,95 +102,45 @@ async function predictFace() {
 }
 
 
-async function createHandLandmarker() {
-    var filesetResolver = await FilesetResolver.forVisionTasks(
-        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm"
-    );
 
-    handLandmarker = await HandLandmarker.createFromOptions(filesetResolver, {
-        baseOptions: {
-            modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task',
-            delegate: "GPU"
-        },
-        modelComplexity: 1,
-        runningMode: "VIDEO",
-        numHands: 2
-    });
-}
+import "https://cdn.jsdelivr.net/npm/@mediapipe/holistic@latest/holistic.js";
+import "https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js";
 
-createHandLandmarker();
+const holistic = new Holistic({
+    locateFile: (file) => {
+        return `https://cdn.jsdelivr.net/npm/@mediapipe/holistic@latest/${file}`;
+    },
+});
 
-var lastVideoTime1 = -1;
+holistic.setOptions({
+    modelComplexity: 1,
+    smoothLandmarks: true,
+    enableSegmentation: true,
+    smoothSegmentation: true,
+    refineFaceLandmarks: true,
+    minDetectionConfidence: 0.5,
+    minTrackingConfidence: 0.5,
+    output_face_landmarks: true,
+    output_face_blendshapes: true,
+    outputFaceBlendshapes: true,
+    outputFaceGeometry: true,
+    output_facial_transformation_matrixes: true,
+    outputFacialTransformationMatrixes: true
+});
+holistic.onResults(onResults2);
 
-async function predictHands() {
-    let results;
-    const video = document.getElementById("video");
-    let startTimeMs = performance.now();
-    if (lastVideoTime1 !== video.currentTime) {
-        lastVideoTime1 = video.currentTime;
-        try{
-            results = handLandmarker.detectForVideo(video, startTimeMs);
-        }
-        catch (error){
-            predictHands();
-        }
-    }
-    if (results) {
-        // console.log("Hands:");
-        // console.log(results);
-        handResults = results;
-        document.getElementById("handResults").innerText = JSON.stringify(results, null, 2);
-
-    }
-    window.requestAnimationFrame(predictHands);
+function onResults2(results) {
+    console.log("Holistic:");
+    console.log(results);
+    holisticResults = results;
 }
 
 
-async function createPoseLandmarker() {
-    var filesetResolver = await FilesetResolver.forVisionTasks(
-        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm"
-    );
-
-    poseLandmarker = await PoseLandmarker.createFromOptions(filesetResolver, {
-        baseOptions: {
-            modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task',
-            delegate: "GPU"
-        },
-        modelComplexity: 1,
-        runningMode: "VIDEO",
-        smoothLandmarks: true,
-        enableSegmentation: true,
-        smoothSegmentation: true,
-        smoothLandmarksOptions: {
-            windowSize: 5,
-            sigma: 1.0
-        }
-    });
-}
-
-createPoseLandmarker();
-
-var lastVideoTime2 = -1;
-
-async function predictPose() {
-    let results;
-    const video = document.getElementById("video");
-    let startTimeMs = performance.now();
-    if (lastVideoTime2 !== video.currentTime) {
-        lastVideoTime2 = video.currentTime;
-        try{
-            results = poseLandmarker.detectForVideo(video, startTimeMs);
-        }
-        catch (error){
-            predictPose();
-        }
-    }
-    if (results) {
-        // console.log("Pose:");
-        // console.log(results);
-        poseResults = results;
-        document.getElementById("poseResults").innerText = JSON.stringify(results, null, 2);
-    }
-    window.requestAnimationFrame(predictPose);
-}
-
+const camera = new Camera(document.getElementById("video"), {
+    onFrame: async () => {
+        await holistic.send({ image: document.getElementById("video") });
+    },
+    width: document.getElementById("video").width,
+    height: document.getElementById("video").height
+});
+camera.start();
