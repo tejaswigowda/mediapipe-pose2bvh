@@ -303,8 +303,8 @@ function init() {
     container.style.top = "0px";
     container.style.right = "0px";
     container.style.zIndex = "1000";
-    container.style.transform = "scale(0.5)";
-    container.style.transformOrigin = "100% 0%";
+    // container.style.transform = "scale(0.5)";
+    // container.style.transformOrigin = "100% 0%";
 
     document.body.appendChild(container);
 
@@ -373,7 +373,7 @@ function init() {
     circle.position.y = -.5;
     circle.position.z = 5;
 
-    scene.add(circle);
+   //scene.add(circle);
 
 
     // model
