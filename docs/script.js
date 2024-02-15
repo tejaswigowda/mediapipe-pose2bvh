@@ -1,39 +1,6 @@
-// run http server with service worker
-
-// register service worker
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js')
-        .then((reg) => {
-            console.log('Service worker registered.', reg);
-        });
-}
-
-
-
-
 const video = document.getElementById('video');
-video.addEventListener('play', predictEverything);
+video.addEventListener('play', predictFace);
 
-function predictEverything() {
-    /*try {
-        predictFace();
-    } catch (error) {
-        predictFace();
-    }
-    try {
-        predictHands();
-    } catch (error) {
-        predictHands();
-    }
-    try {
-        predictPose();
-    } catch (error) {
-        predictPose();
-    }*/
-    predictFace();
-    predictHands();
-    predictPose();
-}
 
 // get the webcam feed
 
@@ -43,7 +10,6 @@ navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then(stream =
 }).catch(err => {
     console.error(err);
 });
-
 
 import vision from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3";
 
@@ -90,11 +56,7 @@ async function predictFace() {
         }
     }
     if (results) {
-        // console.log("Face:");
-        // console.log(results);
         faceResults = results;
-        document.getElementById("faceResults").innerText = JSON.stringify(results, null, 2);
-
     }
     window.requestAnimationFrame(predictFace);
 }
@@ -117,22 +79,13 @@ holistic.setOptions({
     smoothSegmentation: true,
     refineFaceLandmarks: true,
     minDetectionConfidence: 0.5,
-    minTrackingConfidence: 0.5,
-    output_face_landmarks: true,
-    output_face_blendshapes: true,
-    outputFaceBlendshapes: true,
-    outputFaceGeometry: true,
-    output_facial_transformation_matrixes: true,
-    outputFacialTransformationMatrixes: true
+    minTrackingConfidence: 0.5
 });
 holistic.onResults(onResults2);
 
 function onResults2(results) {
-    console.log("Holistic:");
-    console.log(results);
     holisticResults = results;
 }
-
 
 const camera = new Camera(document.getElementById("video"), {
     onFrame: async () => {

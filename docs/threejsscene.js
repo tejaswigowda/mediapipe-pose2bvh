@@ -44,7 +44,7 @@ for (const [key, value] of Object.entries(name_to_index)) {
 
 let index_to_name_hands = {};
 for (const [key, value] of Object.entries(name_to_index)) {
-  index_to_name[value] = key;
+    index_to_name[value] = key;
 }
 
 let name_to_index_hands = {
@@ -69,10 +69,10 @@ let name_to_index_hands = {
     pinky_finger_pip: 18, // pinky_mcp
     pinky_finger_dip: 19, // pinky_mcp
     pinky_finger_tip: 20, // pinky_mcp
-  };
-  for (const [key, value] of Object.entries(name_to_index_hands)) {
+};
+for (const [key, value] of Object.entries(name_to_index_hands)) {
     index_to_name_hands[value] = key;
-  }
+}
 
 function computeR(A, B) {
     // get unit vectors
@@ -480,7 +480,7 @@ function onWindowResize() {
 }
 
 //
-function mapHandLandmarks(landmarks, h, pose_left_wrist, pose_right_wrist){
+function mapHandLandmarks(landmarks, h, pose_left_wrist, pose_right_wrist) {
     if (h == "left") {
         let hand_landmarks_dict = {};
         landmarks.forEach((landmark, i) => {
@@ -744,580 +744,609 @@ function animate() {
         }
     }
 
+    if (holisticResults) {
 
+        let R_chain_rightupper, R_chain_leftupper;
+        let pose_left_wrist, pose_right_wrist;
+        let results = holisticResults;
 
-var pos_3d_landmarks;
+        if (results.poseLandmarks) {
+            // pose
+            let pose_landmarks_dict = {};
+            let newJoints3D = {};
+            results.poseLandmarks.forEach((landmark, i) => {
+                pose_landmarks_dict[index_to_name[i]] = landmark;
+            });
 
-    if (poseResults && poseResults.worldLandmarks && poseResults.worldLandmarks.length > 0) {
-        // position bones
-        var landmarks = poseResults.worldLandmarks[0];
+            let pos_3d_landmarks = update3dpose(
+                camera,
+                1.5,
+                new THREE.Vector3(1, 0, -1.5),
+                pose_landmarks_dict
+            );
 
-        let pose_landmarks_dict = {};
-        let newJoints3D = {};
-        landmarks.forEach((landmark, i) => {
-            pose_landmarks_dict[index_to_name[i]] = landmark;
-        });
+            let i = 0;
 
+            pose_left_wrist = pos_3d_landmarks["left_wrist"];
+            pose_right_wrist = pos_3d_landmarks["right_wrist"];
+            // add landmarks for spine
+            const center_hips = new THREE.Vector3()
+                .addVectors(pos_3d_landmarks["left_hip"], pos_3d_landmarks["right_hip"])
+                .multiplyScalar(0.5);
+            const center_shoulders = new THREE.Vector3()
+                .addVectors(
+                    pos_3d_landmarks["left_shoulder"],
+                    pos_3d_landmarks["right_shoulder"]
+                )
+                .multiplyScalar(0.5);
+            const center_ear = new THREE.Vector3()
+                .addVectors(pos_3d_landmarks["left_ear"], pos_3d_landmarks["right_ear"])
+                .multiplyScalar(0.5);
 
-        pos_3d_landmarks = update3dpose(
-            camera,
-            1.5,
-            new THREE.Vector3(1, 0, -1.5),
-            pose_landmarks_dict
-        );
+            const dir_spine = new THREE.Vector3().subVectors(
+                center_shoulders,
+                center_hips
+            );
+            const length_spine = dir_spine.length();
+            dir_spine.normalize();
 
-        const center_hips = new THREE.Vector3()
-            .addVectors(pos_3d_landmarks["left_hip"], pos_3d_landmarks["right_hip"])
-            .multiplyScalar(0.5);
-        const center_shoulders = new THREE.Vector3()
-            .addVectors(
+            const dir_shoulders = new THREE.Vector3().subVectors(
+                pos_3d_landmarks["right_shoulder"],
+                pos_3d_landmarks["left_shoulder"]
+            );
+
+            newJoints3D["hips"] = new THREE.Vector3().addVectors(
+                center_hips,
+                dir_spine.clone().multiplyScalar(length_spine / 9.0)
+            );
+            newJoints3D["spine0"] = new THREE.Vector3().addVectors(
+                center_hips,
+                dir_spine.clone().multiplyScalar((length_spine / 9.0) * 3)
+            );
+            newJoints3D["spine1"] = new THREE.Vector3().addVectors(
+                center_hips,
+                dir_spine.clone().multiplyScalar((length_spine / 9.0) * 5)
+            );
+            newJoints3D["spine2"] = new THREE.Vector3().addVectors(
+                center_hips,
+                dir_spine.clone().multiplyScalar((length_spine / 9.0) * 7)
+            );
+            const neck = new THREE.Vector3().addVectors(
+                center_shoulders,
+                dir_spine.clone().multiplyScalar(length_spine / 9.0)
+            );
+            newJoints3D["neck"] = neck;
+            newJoints3D["shoulder_left"] = new THREE.Vector3().addVectors(
                 pos_3d_landmarks["left_shoulder"],
-                pos_3d_landmarks["right_shoulder"]
-            )
-            .multiplyScalar(0.5);
-        const center_ear = new THREE.Vector3()
-            .addVectors(pos_3d_landmarks["left_ear"], pos_3d_landmarks["right_ear"])
-            .multiplyScalar(0.5);
+                dir_shoulders.clone().multiplyScalar(1 / 3.0)
+            );
+            newJoints3D["shoulder_right"] = new THREE.Vector3().addVectors(
+                pos_3d_landmarks["left_shoulder"],
+                dir_shoulders.clone().multiplyScalar(2 / 3.0)
+            );
+            const dir_head = new THREE.Vector3().subVectors(center_ear, neck);
+            newJoints3D["head"] = new THREE.Vector3().addVectors(
+                neck,
+                dir_head.clone().multiplyScalar(0.5)
+            );
+            const dir_right_foot = new THREE.Vector3().subVectors(
+                pos_3d_landmarks["right_foot_index"],
+                pos_3d_landmarks["right_heel"]
+            );
+            newJoints3D["right_toebase"] = new THREE.Vector3().addVectors(
+                pos_3d_landmarks["right_heel"],
+                dir_right_foot.clone().multiplyScalar(0.6)
+            );
+            const dir_left_foot = new THREE.Vector3().subVectors(
+                pos_3d_landmarks["left_foot_index"],
+                pos_3d_landmarks["left_heel"]
+            );
+            newJoints3D["left_toebase"] = new THREE.Vector3().addVectors(
+                pos_3d_landmarks["left_heel"],
+                dir_left_foot.clone().multiplyScalar(0.6)
+            );
 
-        const dir_spine = new THREE.Vector3().subVectors(
-            center_shoulders,
-            center_hips
-        );
-        const length_spine = dir_spine.length();
-        dir_spine.normalize();
-
-        const dir_shoulders = new THREE.Vector3().subVectors(
-            pos_3d_landmarks["right_shoulder"],
-            pos_3d_landmarks["left_shoulder"]
-        );
-
-        newJoints3D["hips"] = new THREE.Vector3().addVectors(
-            center_hips,
-            dir_spine.clone().multiplyScalar(length_spine / 9.0)
-        );
-        newJoints3D["spine0"] = new THREE.Vector3().addVectors(
-            center_hips,
-            dir_spine.clone().multiplyScalar((length_spine / 9.0) * 3)
-        );
-        newJoints3D["spine1"] = new THREE.Vector3().addVectors(
-            center_hips,
-            dir_spine.clone().multiplyScalar((length_spine / 9.0) * 5)
-        );
-        newJoints3D["spine2"] = new THREE.Vector3().addVectors(
-            center_hips,
-            dir_spine.clone().multiplyScalar((length_spine / 9.0) * 7)
-        );
-        const neck = new THREE.Vector3().addVectors(
-            center_shoulders,
-            dir_spine.clone().multiplyScalar(length_spine / 9.0)
-        );
-        newJoints3D["neck"] = neck;
-        newJoints3D["shoulder_left"] = new THREE.Vector3().addVectors(
-            pos_3d_landmarks["left_shoulder"],
-            dir_shoulders.clone().multiplyScalar(1 / 3.0)
-        );
-        newJoints3D["shoulder_right"] = new THREE.Vector3().addVectors(
-            pos_3d_landmarks["left_shoulder"],
-            dir_shoulders.clone().multiplyScalar(2 / 3.0)
-        );
-        const dir_head = new THREE.Vector3().subVectors(center_ear, neck);
-        newJoints3D["head"] = new THREE.Vector3().addVectors(
-            neck,
-            dir_head.clone().multiplyScalar(0.5)
-        );
-        const dir_right_foot = new THREE.Vector3().subVectors(
-            pos_3d_landmarks["right_foot_index"],
-            pos_3d_landmarks["right_heel"]
-        );
-        newJoints3D["right_toebase"] = new THREE.Vector3().addVectors(
-            pos_3d_landmarks["right_heel"],
-            dir_right_foot.clone().multiplyScalar(0.6)
-        );
-        const dir_left_foot = new THREE.Vector3().subVectors(
-            pos_3d_landmarks["left_foot_index"],
-            pos_3d_landmarks["left_heel"]
-        );
-        newJoints3D["left_toebase"] = new THREE.Vector3().addVectors(
-            pos_3d_landmarks["left_heel"],
-            dir_left_foot.clone().multiplyScalar(0.6)
-        );
-
-        const jointHips = newJoints3D["hips"];
-        const jointLeftUpLeg = pos_3d_landmarks["left_hip"];
-        const jointRightUpLeg = pos_3d_landmarks["right_hip"];
-        const jointSpine0 = newJoints3D["spine0"];
-
-        const boneHips = model.getObjectByName("mixamorigHips");
-        const boneLeftUpLeg = model.getObjectByName("mixamorigLeftUpLeg");
-        const boneRightUpLeg = model.getObjectByName("mixamorigRightUpLeg");
-        const boneSpine0 = model.getObjectByName("mixamorigSpine");
-
-        const v_HiptoLeft = new THREE.Vector3()
-            .subVectors(jointLeftUpLeg, jointHips)
-            .normalize();
-        const v_HiptoRight = new THREE.Vector3()
-            .subVectors(jointRightUpLeg, jointHips)
-            .normalize();
-        const v_HiptoSpine0 = new THREE.Vector3()
-            .subVectors(jointSpine0, jointHips)
-            .normalize();
-
-        const R_HiptoLeft = computeR(
-            boneLeftUpLeg.position.clone().normalize(),
-            v_HiptoLeft
-        );
-        const Q_HiptoLeft = new THREE.Quaternion().setFromRotationMatrix(
-            R_HiptoLeft
-        );
-        const R_HiptoRight = computeR(
-            boneRightUpLeg.position.clone().normalize(),
-            v_HiptoRight
-        );
-        const Q_HiptoRight = new THREE.Quaternion().setFromRotationMatrix(
-            R_HiptoRight
-        );
-        const R_HiptoSpine0 = computeR(
-            boneSpine0.position.clone().normalize(),
-            v_HiptoSpine0
-        );
-        const Q_HiptoSpine0 = new THREE.Quaternion().setFromRotationMatrix(
-            R_HiptoSpine0
-        );
-        const Q_Hips = new THREE.Quaternion()
-            .copy(Q_HiptoSpine0)
-            .slerp(Q_HiptoLeft.clone().slerp(Q_HiptoRight, 0.5), 1 / 3);
-
-        boneHips.quaternion.copy(Q_Hips);
-        const R_Hips = new THREE.Matrix4().extractRotation(boneHips.matrix);
-
-        // neck
-        let R_chain_neck = new THREE.Matrix4().identity();
-        R_chain_neck.multiply(R_Hips);
-        const jointNeck = newJoints3D["neck"];
-        const jointHead = newJoints3D["head"];
-        const boneNeck = model.getObjectByName("mixamorigNeck");
-        const boneHead = model.getObjectByName("mixamorigHead");
-        /*SetRbyCalculatingJoints(
-            jointNeck,
-            jointHead,
-            boneNeck,
-            boneHead,
-            R_chain_neck
-        );*/
-
-        // Left shoulder-elbow-wrist
-        R_chain_leftupper = new THREE.Matrix4().identity();
-        R_chain_leftupper.multiply(R_Hips);
-        const jointLeftShoulder_inside = newJoints3D["shoulder_left"];
-        const jointLeftShoulder = pos_3d_landmarks["left_shoulder"];
-        const jointLeftElbow = pos_3d_landmarks["left_elbow"];
-        const jointLeftWrist = pos_3d_landmarks["left_wrist"];
-
-        const boneLeftShoulder = model.getObjectByName("mixamorigLeftShoulder");
-        const boneLeftArm = model.getObjectByName("mixamorigLeftArm");
-        const boneLeftForeArm = model.getObjectByName("mixamorigLeftForeArm");
-        const boneLeftHand = model.getObjectByName("mixamorigLeftHand");
-
-        SetRbyCalculatingJoints(
-            jointLeftShoulder_inside,
-            jointLeftShoulder,
-            boneLeftShoulder,
-            boneLeftArm,
-            R_chain_leftupper
-        );
-        SetRbyCalculatingJoints(
-            jointLeftShoulder,
-            jointLeftElbow,
-            boneLeftArm,
-            boneLeftForeArm,
-            R_chain_leftupper
-        );
-        SetRbyCalculatingJoints(
-            jointLeftElbow,
-            jointLeftWrist,
-            boneLeftForeArm,
-            boneLeftHand,
-            R_chain_leftupper
-        );
-
-        // Right shoulder-elbow-wrist
-        R_chain_rightupper = new THREE.Matrix4().identity();
-        R_chain_rightupper.multiply(R_Hips);
-        const jointRightShoulder_inside = newJoints3D["shoulder_left"];
-        const jointRightShoulder = pos_3d_landmarks["right_shoulder"];
-        const jointRightElbow = pos_3d_landmarks["right_elbow"];
-        const jointRightWrist = pos_3d_landmarks["right_wrist"];
-
-        const boneRightShoulder = model.getObjectByName("mixamorigRightShoulder");
-        const boneRightArm = model.getObjectByName("mixamorigRightArm");
-        const boneRightForeArm = model.getObjectByName("mixamorigRightForeArm");
-        const boneRightHand = model.getObjectByName("mixamorigRightHand");
-
-        SetRbyCalculatingJoints(
-            jointRightShoulder_inside,
-            jointRightShoulder,
-            boneRightShoulder,
-            boneRightArm,
-            R_chain_rightupper
-        );
-        SetRbyCalculatingJoints(
-            jointRightShoulder,
-            jointRightElbow,
-            boneRightArm,
-            boneRightForeArm,
-            R_chain_rightupper
-        );
-        SetRbyCalculatingJoints(
-            jointRightElbow,
-            jointRightWrist,
-            boneRightForeArm,
-            boneRightHand,
-            R_chain_rightupper
-        );
-
-        // left upleg-leg-foot
-        let R_chain_leftlower = new THREE.Matrix4().identity();
-        R_chain_leftlower.multiply(R_Hips);
-        const jointLeftKnee = pos_3d_landmarks["left_knee"];
-        const jointLeftAnkle = pos_3d_landmarks["left_ankle"];
-        const jointLeftToeBase = newJoints3D["left_toebase"];
-        const jointLeftFoot = pos_3d_landmarks["left_foot_index"];
-
-        const boneLeftLeg = model.getObjectByName("mixamorigLeftLeg");
-        const boneLeftFoot = model.getObjectByName("mixamorigLeftFoot");
-        const boneLeftToeBase = model.getObjectByName("mixamorigLeftToeBase");
-        const boneLeftToe_End = model.getObjectByName("mixamorigLeftToe_End");
-        SetRbyCalculatingJoints(
-            jointLeftUpLeg,
-            jointLeftKnee,
-            boneLeftUpLeg,
-            boneLeftLeg,
-            R_chain_leftlower
-        );
-        SetRbyCalculatingJoints(
-            jointLeftKnee,
-            jointLeftAnkle,
-            boneLeftLeg,
-            boneLeftFoot,
-            R_chain_leftlower
-        );
-        SetRbyCalculatingJoints(
-            jointLeftAnkle,
-            jointLeftToeBase,
-            boneLeftFoot,
-            boneLeftToeBase,
-            R_chain_leftlower
-        );
-        SetRbyCalculatingJoints(
-            jointLeftToeBase,
-            jointLeftFoot,
-            boneLeftToeBase,
-            boneLeftToe_End,
-            R_chain_leftlower
-        );
-        // Right upleg-leg-foot
-        let R_chain_rightlower = new THREE.Matrix4().identity();
-        R_chain_rightlower.multiply(R_Hips);
-
-        const jointRightKnee = pos_3d_landmarks["right_knee"];
-        const jointRightAnkle = pos_3d_landmarks["right_ankle"];
-        const jointRightToeBase = newJoints3D["right_toebase"];
-        const jointRightFoot = pos_3d_landmarks["right_foot_index"];
-
-        const boneRightLeg = model.getObjectByName("mixamorigRightLeg");
-        const boneRightFoot = model.getObjectByName("mixamorigRightFoot");
-        const boneRightToeBase = model.getObjectByName("mixamorigRightToeBase");
-        const boneRightToe_End = model.getObjectByName("mixamorigRightToe_End");
-
-        SetRbyCalculatingJoints(
-            jointRightUpLeg,
-            jointRightKnee,
-            boneRightUpLeg,
-            boneRightLeg,
-            R_chain_rightlower
-        );
-        SetRbyCalculatingJoints(
-            jointRightKnee,
-            jointRightAnkle,
-            boneRightLeg,
-            boneRightFoot,
-            R_chain_rightlower
-        );
-        SetRbyCalculatingJoints(
-            jointRightAnkle,
-            jointRightToeBase,
-            boneRightFoot,
-            boneRightToeBase,
-            R_chain_rightlower
-        );
-        SetRbyCalculatingJoints(
-            jointRightToeBase,
-            jointRightFoot,
-            boneRightToeBase,
-            boneRightToe_End,
-            R_chain_rightlower
-        );
-    }
+            i = 0;
 
 
+            // hip
+            const jointHips = newJoints3D["hips"];
+            const jointLeftUpLeg = pos_3d_landmarks["left_hip"];
+            const jointRightUpLeg = pos_3d_landmarks["right_hip"];
+            const jointSpine0 = newJoints3D["spine0"];
 
-    if (pos_3d_landmarks && handResults && handResults.handednesses && handResults.landmarks && handResults.landmarks.length > 0) {
-        var handednesses = handResults.handednesses;
-        console.log(handednesses);
-        for (var i = 0; i < handednesses.length; i++) {
-            var hand = handednesses[i][0].categoryName.toLowerCase();
-            var pose_left_wrist = pos_3d_landmarks["left_wrist"];
-            var pose_right_wrist = pos_3d_landmarks["right_wrist"];
-            var landmarks = handResults.landmarks[i];
-            if (hand == "left") {
-                let hand_landmarks_dict = {};
-                landmarks.forEach((landmark, i) => {
-                    hand_landmarks_dict[index_to_name_hands[i]] = landmark;
-                });
-                let hand_3d_landmarks = update3dpose(
-                    camera,
-                    1.5,
-                    new THREE.Vector3(1, 0, -1.5),
-                    hand_landmarks_dict
-                );
-                let i = 0;
-                const jointWrist = hand_3d_landmarks["wrist"];
-                const jointIndex_mcp = hand_3d_landmarks["index_finger_mcp"];
-                const jointMiddle_mcp = hand_3d_landmarks["middle_finger_mcp"];
-                const jointPinky_mcp = hand_3d_landmarks["pinky_finger_mcp"];
-        
-                const boneHand = model.getObjectByName("mixamorigLeftHand");
-                const boneIndex1 = model.getObjectByName("mixamorigLeftHandIndex1");
-                const boneMiddle1 = model.getObjectByName("mixamorigLeftHandMiddle1");
-                const bonePinky1 = model.getObjectByName("mixamorigLeftHandPinky1");
-        
-                const v_middle = new THREE.Vector3().subVectors(
-                    jointMiddle_mcp,
-                    jointWrist
-                );
-        
-                const v_hand_v = v_middle.clone().normalize();
-                const v_hand_index2pinky = new THREE.Vector3()
-                    .subVectors(jointPinky_mcp, jointIndex_mcp)
-                    .normalize();
-                const v_hand_w = new THREE.Vector3().crossVectors(
-                    v_hand_index2pinky,
-                    v_hand_v
-                );
-                const v_hand_u = new THREE.Vector3().crossVectors(v_hand_v, v_hand_w);
-                const R_MPhand = new THREE.Matrix4().makeBasis(
-                    v_hand_u,
-                    v_hand_v,
-                    v_hand_w
-                );
-        
-                const v_bonehand_v = boneMiddle1.clone().position.normalize();
-                const v_bonehand_index2pinky = new THREE.Vector3()
-                    .subVectors(bonePinky1.position, boneIndex1.position)
-                    .normalize();
-                const v_bonehand_w = new THREE.Vector3().crossVectors(
-                    v_bonehand_index2pinky,
-                    v_bonehand_v
-                );
-                const v_bonehand_u = new THREE.Vector3().crossVectors(
-                    v_bonehand_v,
-                    v_bonehand_w
-                );
-                const R_Modelhand = new THREE.Matrix4().makeBasis(
-                    v_bonehand_u,
-                    v_bonehand_v,
-                    v_bonehand_w
-                );
-        
-                const R_BonetoMP = R_MPhand.clone().multiply(
-                    R_Modelhand.clone().transpose()
-                );
-                const R_toTpose = R_chain_leftupper.clone().transpose();
-                const R_wrist = R_BonetoMP.clone().premultiply(R_toTpose);
-                boneHand.quaternion.setFromRotationMatrix(R_wrist);
-        
-                R_chain_leftupper.multiply(
-                    new THREE.Matrix4().extractRotation(boneHand.matrix)
-                );
-                let R_chain_index = new THREE.Matrix4().identity();
-                let R_chain_middle = new THREE.Matrix4().identity();
-                let R_chain_ring = new THREE.Matrix4().identity();
-                let R_chain_pinky = new THREE.Matrix4().identity();
-                let R_chain_thumb = new THREE.Matrix4().identity();
-        
-                let R_list = [
-                    R_chain_index,
-                    R_chain_middle,
-                    R_chain_ring,
-                    R_chain_pinky,
-                    R_chain_thumb,
-                ];
-        
-                for (i = 0; i < 5; i++) {
-                    R_list[i].multiply(R_chain_leftupper);
-                }
-        
-                for (i = 0; i < 15; i++) {
-                    let bone_list = [
-                        "index",
-                        "middle",
-                        "ring",
-                        "pinky",
-                        "thumb",
-                        "Index",
-                        "Middle",
-                        "Ring",
-                        "Pinky",
-                        "Thumb",
-                    ];
-                    let bone_point_list = ["mcp", "pip", "dip", "tip"];
-                    let remainder = i % 3;
-                    let quotient = parseInt(i / 3);
-                    let finger = bone_list[quotient];
-                    let finger_point = finger + "_finger_" + bone_point_list[remainder];
-                    let next_point = finger + "_finger_" + bone_point_list[remainder + 1];
-                    let Bone =
-                        "mixamorigLeftHand" + bone_list[quotient + 5] + (remainder + 1);
-                    let next_Bone =
-                        "mixamorigLeftHand" + bone_list[quotient + 5] + (remainder + 2);
-                    let R = R_list[quotient];
-                    SetRbyCalculatingJoints(
-                        hand_3d_landmarks[finger_point],
-                        hand_3d_landmarks[next_point],
-                        model.getObjectByName(Bone),
-                        model.getObjectByName(next_Bone),
-                        R
-                    );
-                }
-        
-            }
-            else {
-                let hand_landmarks_dict = {};
-                landmarks.forEach((landmark, i) => {
-                    hand_landmarks_dict[index_to_name_hands[i]] = landmark;
-                });
-                let hand_3d_landmarks = update3dpose(
-                    camera,
-                    1.5,
-                    new THREE.Vector3(1, 0, -1.5),
-                    hand_landmarks_dict
-                );
-                let i = 0;
-        
-                const jointWrist = hand_3d_landmarks["wrist"];
-                const jointIndex_mcp = hand_3d_landmarks["index_finger_mcp"];
-                const jointMiddle_mcp = hand_3d_landmarks["middle_finger_mcp"];
-                const jointPinky_mcp = hand_3d_landmarks["pinky_finger_mcp"];
-        
-                const boneHand = model.getObjectByName("mixamorigRightHand");
-                const boneIndex1 = model.getObjectByName("mixamorigRightHandIndex1");
-                const boneMiddle1 = model.getObjectByName("mixamorigRightHandMiddle1");
-                const bonePinky1 = model.getObjectByName("mixamorigRightHandPinky1");
-        
-                const v_middle = new THREE.Vector3().subVectors(
-                    jointMiddle_mcp,
-                    jointWrist
-                );
-        
-                const v_hand_v = v_middle.clone().normalize();
-                const v_hand_index2pinky = new THREE.Vector3()
-                    .subVectors(jointPinky_mcp, jointIndex_mcp)
-                    .normalize();
-                const v_hand_w = new THREE.Vector3().crossVectors(
-                    v_hand_index2pinky,
-                    v_hand_v
-                );
-                const v_hand_u = new THREE.Vector3().crossVectors(v_hand_v, v_hand_w);
-                const R_MPhand = new THREE.Matrix4().makeBasis(
-                    v_hand_u,
-                    v_hand_v,
-                    v_hand_w
-                );
-        
-                const v_bonehand_v = boneMiddle1.clone().position.normalize();
-                const v_bonehand_index2pinky = new THREE.Vector3()
-                    .subVectors(bonePinky1.position, boneIndex1.position)
-                    .normalize();
-                const v_bonehand_w = new THREE.Vector3().crossVectors(
-                    v_bonehand_index2pinky,
-                    v_bonehand_v
-                );
-                const v_bonehand_u = new THREE.Vector3().crossVectors(
-                    v_bonehand_v,
-                    v_bonehand_w
-                );
-                const R_Modelhand = new THREE.Matrix4().makeBasis(
-                    v_bonehand_u,
-                    v_bonehand_v,
-                    v_bonehand_w
-                );
-        
-                const R_BonetoMP = R_MPhand.clone().multiply(
-                    R_Modelhand.clone().transpose()
-                );
-                const R_toTpose = R_chain_rightupper.clone().transpose();
-                const R_wrist = R_BonetoMP.clone().premultiply(R_toTpose);
-                boneHand.quaternion.setFromRotationMatrix(R_wrist);
-        
-                R_chain_rightupper.multiply(
-                    new THREE.Matrix4().extractRotation(boneHand.matrix)
-                );
-                let R_chain_index = new THREE.Matrix4().identity();
-                let R_chain_middle = new THREE.Matrix4().identity();
-                let R_chain_ring = new THREE.Matrix4().identity();
-                let R_chain_pinky = new THREE.Matrix4().identity();
-                let R_chain_thumb = new THREE.Matrix4().identity();
-        
-                let R_list = [
-                    R_chain_index,
-                    R_chain_middle,
-                    R_chain_ring,
-                    R_chain_pinky,
-                    R_chain_thumb,
-                ];
-        
-                for (i = 0; i < 5; i++) {
-                    R_list[i].multiply(R_chain_rightupper);
-                }
-        
-                for (i = 0; i < 15; i++) {
-                    let bone_list = [
-                        "index",
-                        "middle",
-                        "ring",
-                        "pinky",
-                        "thumb",
-                        "Index",
-                        "Middle",
-                        "Ring",
-                        "Pinky",
-                        "Thumb",
-                    ];
-                    let bone_point_list = ["mcp", "pip", "dip", "tip"];
-                    let remainder = i % 3;
-                    let quotient = parseInt(i / 3);
-                    let finger = bone_list[quotient];
-                    let finger_point = finger + "_finger_" + bone_point_list[remainder];
-                    let next_point = finger + "_finger_" + bone_point_list[remainder + 1];
-                    let Bone =
-                        "mixamorigRightHand" + bone_list[quotient + 5] + (remainder + 1);
-                    let next_Bone =
-                        "mixamorigRightHand" + bone_list[quotient + 5] + (remainder + 2);
-                    let R = R_list[quotient];
-                    SetRbyCalculatingJoints(
-                        hand_3d_landmarks[finger_point],
-                        hand_3d_landmarks[next_point],
-                        model.getObjectByName(Bone),
-                        model.getObjectByName(next_Bone),
-                        R
-                    );
-                }
-            }
-            console.log(hand);
+            const boneHips = model.getObjectByName("mixamorigHips");
+            const boneLeftUpLeg = model.getObjectByName("mixamorigLeftUpLeg");
+            const boneRightUpLeg = model.getObjectByName("mixamorigRightUpLeg");
+            const boneSpine0 = model.getObjectByName("mixamorigSpine");
+
+            const v_HiptoLeft = new THREE.Vector3()
+                .subVectors(jointLeftUpLeg, jointHips)
+                .normalize();
+            const v_HiptoRight = new THREE.Vector3()
+                .subVectors(jointRightUpLeg, jointHips)
+                .normalize();
+            const v_HiptoSpine0 = new THREE.Vector3()
+                .subVectors(jointSpine0, jointHips)
+                .normalize();
+
+            const R_HiptoLeft = computeR(
+                boneLeftUpLeg.position.clone().normalize(),
+                v_HiptoLeft
+            );
+            const Q_HiptoLeft = new THREE.Quaternion().setFromRotationMatrix(
+                R_HiptoLeft
+            );
+            const R_HiptoRight = computeR(
+                boneRightUpLeg.position.clone().normalize(),
+                v_HiptoRight
+            );
+            const Q_HiptoRight = new THREE.Quaternion().setFromRotationMatrix(
+                R_HiptoRight
+            );
+            const R_HiptoSpine0 = computeR(
+                boneSpine0.position.clone().normalize(),
+                v_HiptoSpine0
+            );
+            const Q_HiptoSpine0 = new THREE.Quaternion().setFromRotationMatrix(
+                R_HiptoSpine0
+            );
+            const Q_Hips = new THREE.Quaternion()
+                .copy(Q_HiptoSpine0)
+                .slerp(Q_HiptoLeft.clone().slerp(Q_HiptoRight, 0.5), 1 / 3);
+
+            boneHips.quaternion.copy(Q_Hips);
+            const R_Hips = new THREE.Matrix4().extractRotation(boneHips.matrix);
+
+            // neck
+            let R_chain_neck = new THREE.Matrix4().identity();
+            R_chain_neck.multiply(R_Hips);
+            const jointNeck = newJoints3D["neck"];
+            const jointHead = newJoints3D["head"];
+            const boneNeck = model.getObjectByName("mixamorigNeck");
+            const boneHead = model.getObjectByName("mixamorigHead");
+            SetRbyCalculatingJoints(
+                jointNeck,
+                jointHead,
+                boneNeck,
+                boneHead,
+                R_chain_neck
+            );
+            const jointLeftEye = pos_3d_landmarks["left_eye"];
+            const jointRightEye = pos_3d_landmarks["right_eye"];
+            const boneLeftEye = model.getObjectByName("mixamorigLeftEye");
+            const boneRightEye = model.getObjectByName("mixamorigRightEye");
+            const v_LeftEye = new THREE.Vector3()
+                .subVectors(jointLeftEye, jointHead)
+                .normalize();
+            const v_RightEye = new THREE.Vector3()
+                .subVectors(jointRightEye, jointHead)
+                .normalize();
+            const R_HeadtoLeftEye = computeR(
+                boneLeftEye.position.clone().normalize(),
+                v_LeftEye.clone().applyMatrix4(R_chain_neck.clone().transpose())
+            );
+            const R_HeadtoRightEye = computeR(
+                boneRightEye.position.clone().normalize(),
+                v_RightEye.clone().applyMatrix4(R_chain_neck.clone().transpose())
+            );
+            const Q_HeadtoLeftEye = new THREE.Quaternion().setFromRotationMatrix(
+                R_HeadtoLeftEye
+            );
+            const Q_HeadtoRightEye = new THREE.Quaternion().setFromRotationMatrix(
+                R_HeadtoRightEye
+            );
+            const Q_Head = new THREE.Quaternion()
+                .copy(Q_HeadtoLeftEye)
+                .slerp(Q_HeadtoRightEye, 0.5);
+            boneHead.quaternion.copy(Q_Head);
+
+            // Left shoulder-elbow-wrist
+            R_chain_leftupper = new THREE.Matrix4().identity();
+            R_chain_leftupper.multiply(R_Hips);
+            const jointLeftShoulder_inside = newJoints3D["shoulder_left"];
+            const jointLeftShoulder = pos_3d_landmarks["left_shoulder"];
+            const jointLeftElbow = pos_3d_landmarks["left_elbow"];
+            const jointLeftWrist = pos_3d_landmarks["left_wrist"];
+
+            const boneLeftShoulder = model.getObjectByName("mixamorigLeftShoulder");
+            const boneLeftArm = model.getObjectByName("mixamorigLeftArm");
+            const boneLeftForeArm = model.getObjectByName("mixamorigLeftForeArm");
+            const boneLeftHand = model.getObjectByName("mixamorigLeftHand");
+
+            SetRbyCalculatingJoints(
+                jointLeftShoulder_inside,
+                jointLeftShoulder,
+                boneLeftShoulder,
+                boneLeftArm,
+                R_chain_leftupper
+            );
+            SetRbyCalculatingJoints(
+                jointLeftShoulder,
+                jointLeftElbow,
+                boneLeftArm,
+                boneLeftForeArm,
+                R_chain_leftupper
+            );
+            SetRbyCalculatingJoints(
+                jointLeftElbow,
+                jointLeftWrist,
+                boneLeftForeArm,
+                boneLeftHand,
+                R_chain_leftupper
+            );
+
+            // Right shoulder-elbow-wrist
+            R_chain_rightupper = new THREE.Matrix4().identity();
+            R_chain_rightupper.multiply(R_Hips);
+            const jointRightShoulder_inside = newJoints3D["shoulder_left"];
+            const jointRightShoulder = pos_3d_landmarks["right_shoulder"];
+            const jointRightElbow = pos_3d_landmarks["right_elbow"];
+            const jointRightWrist = pos_3d_landmarks["right_wrist"];
+
+            const boneRightShoulder = model.getObjectByName("mixamorigRightShoulder");
+            const boneRightArm = model.getObjectByName("mixamorigRightArm");
+            const boneRightForeArm = model.getObjectByName("mixamorigRightForeArm");
+            const boneRightHand = model.getObjectByName("mixamorigRightHand");
+
+            SetRbyCalculatingJoints(
+                jointRightShoulder_inside,
+                jointRightShoulder,
+                boneRightShoulder,
+                boneRightArm,
+                R_chain_rightupper,
+                true
+            );
+            SetRbyCalculatingJoints(
+                jointRightShoulder,
+                jointRightElbow,
+                boneRightArm,
+                boneRightForeArm,
+                R_chain_rightupper
+            );
+            SetRbyCalculatingJoints(
+                jointRightElbow,
+                jointRightWrist,
+                boneRightForeArm,
+                boneRightHand,
+                R_chain_rightupper
+            );
+
+            // left upleg-leg-foot
+            let R_chain_leftlower = new THREE.Matrix4().identity();
+            R_chain_leftlower.multiply(R_Hips);
+            const jointLeftKnee = pos_3d_landmarks["left_knee"];
+            const jointLeftAnkle = pos_3d_landmarks["left_ankle"];
+            const jointLeftToeBase = newJoints3D["left_toebase"];
+            const jointLeftFoot = pos_3d_landmarks["left_foot_index"];
+
+            const boneLeftLeg = model.getObjectByName("mixamorigLeftLeg");
+            const boneLeftFoot = model.getObjectByName("mixamorigLeftFoot");
+            const boneLeftToeBase = model.getObjectByName("mixamorigLeftToeBase");
+            const boneLeftToe_End = model.getObjectByName("mixamorigLeftToe_End");
+            SetRbyCalculatingJoints(
+                jointLeftUpLeg,
+                jointLeftKnee,
+                boneLeftUpLeg,
+                boneLeftLeg,
+                R_chain_leftlower
+            );
+            SetRbyCalculatingJoints(
+                jointLeftKnee,
+                jointLeftAnkle,
+                boneLeftLeg,
+                boneLeftFoot,
+                R_chain_leftlower
+            );
+            SetRbyCalculatingJoints(
+                jointLeftAnkle,
+                jointLeftToeBase,
+                boneLeftFoot,
+                boneLeftToeBase,
+                R_chain_leftlower
+            );
+            SetRbyCalculatingJoints(
+                jointLeftToeBase,
+                jointLeftFoot,
+                boneLeftToeBase,
+                boneLeftToe_End,
+                R_chain_leftlower
+            );
+            // Right upleg-leg-foot
+            let R_chain_rightlower = new THREE.Matrix4().identity();
+            R_chain_rightlower.multiply(R_Hips);
+
+            const jointRightKnee = pos_3d_landmarks["right_knee"];
+            const jointRightAnkle = pos_3d_landmarks["right_ankle"];
+            const jointRightToeBase = newJoints3D["right_toebase"];
+            const jointRightFoot = pos_3d_landmarks["right_foot_index"];
+
+            const boneRightLeg = model.getObjectByName("mixamorigRightLeg");
+            const boneRightFoot = model.getObjectByName("mixamorigRightFoot");
+            const boneRightToeBase = model.getObjectByName("mixamorigRightToeBase");
+            const boneRightToe_End = model.getObjectByName("mixamorigRightToe_End");
+
+            SetRbyCalculatingJoints(
+                jointRightUpLeg,
+                jointRightKnee,
+                boneRightUpLeg,
+                boneRightLeg,
+                R_chain_rightlower
+            );
+            SetRbyCalculatingJoints(
+                jointRightKnee,
+                jointRightAnkle,
+                boneRightLeg,
+                boneRightFoot,
+                R_chain_rightlower
+            );
+            SetRbyCalculatingJoints(
+                jointRightAnkle,
+                jointRightToeBase,
+                boneRightFoot,
+                boneRightToeBase,
+                R_chain_rightlower
+            );
+            SetRbyCalculatingJoints(
+                jointRightToeBase,
+                jointRightFoot,
+                boneRightToeBase,
+                boneRightToe_End,
+                R_chain_rightlower
+            );
         }
-        var landmarks = handResults.landmarks[0];
-        console.log(handResults);
+        if (results.leftHandLandmarks) {
+            let hand_landmarks_dict = {};
+            results.leftHandLandmarks.forEach((landmark, i) => {
+                hand_landmarks_dict[index_to_name_hands[i]] = landmark;
+            });
+            let hand_3d_landmarks = update3dpose(
+                camera,
+                1.5,
+                new THREE.Vector3(1, 0, -1.5),
+                hand_landmarks_dict
+            );
+            let i = 0;
+            const gap_X = pose_left_wrist.x - hand_3d_landmarks["wrist"].x;
+            const gap_Y = pose_left_wrist.y - hand_3d_landmarks["wrist"].y;
+            const gap_Z = pose_left_wrist.z - hand_3d_landmarks["wrist"].z;
+
+            const jointWrist = hand_3d_landmarks["wrist"];
+            const jointIndex_mcp = hand_3d_landmarks["index_finger_mcp"];
+            const jointMiddle_mcp = hand_3d_landmarks["middle_finger_mcp"];
+            const jointPinky_mcp = hand_3d_landmarks["pinky_finger_mcp"];
+
+            const boneHand = model.getObjectByName("mixamorigLeftHand");
+            const boneIndex1 = model.getObjectByName("mixamorigLeftHandIndex1");
+            const boneMiddle1 = model.getObjectByName("mixamorigLeftHandMiddle1");
+            const bonePinky1 = model.getObjectByName("mixamorigLeftHandPinky1");
+
+            const v_middle = new THREE.Vector3().subVectors(
+                jointMiddle_mcp,
+                jointWrist
+            );
+
+            const v_hand_v = v_middle.clone().normalize();
+            const v_hand_index2pinky = new THREE.Vector3()
+                .subVectors(jointPinky_mcp, jointIndex_mcp)
+                .normalize();
+            const v_hand_w = new THREE.Vector3().crossVectors(
+                v_hand_index2pinky,
+                v_hand_v
+            );
+            const v_hand_u = new THREE.Vector3().crossVectors(v_hand_v, v_hand_w);
+            const R_MPhand = new THREE.Matrix4().makeBasis(
+                v_hand_u,
+                v_hand_v,
+                v_hand_w
+            );
+
+            const v_bonehand_v = boneMiddle1.clone().position.normalize();
+            const v_bonehand_index2pinky = new THREE.Vector3()
+                .subVectors(bonePinky1.position, boneIndex1.position)
+                .normalize();
+            const v_bonehand_w = new THREE.Vector3().crossVectors(
+                v_bonehand_index2pinky,
+                v_bonehand_v
+            );
+            const v_bonehand_u = new THREE.Vector3().crossVectors(
+                v_bonehand_v,
+                v_bonehand_w
+            );
+            const R_Modelhand = new THREE.Matrix4().makeBasis(
+                v_bonehand_u,
+                v_bonehand_v,
+                v_bonehand_w
+            );
+
+            const R_BonetoMP = R_MPhand.clone().multiply(
+                R_Modelhand.clone().transpose()
+            );
+            const R_toTpose = R_chain_leftupper.clone().transpose();
+            const R_wrist = R_BonetoMP.clone().premultiply(R_toTpose);
+            boneHand.quaternion.setFromRotationMatrix(R_wrist);
+
+            R_chain_leftupper.multiply(
+                new THREE.Matrix4().extractRotation(boneHand.matrix)
+            );
+            let R_chain_index = new THREE.Matrix4().identity();
+            let R_chain_middle = new THREE.Matrix4().identity();
+            let R_chain_ring = new THREE.Matrix4().identity();
+            let R_chain_pinky = new THREE.Matrix4().identity();
+            let R_chain_thumb = new THREE.Matrix4().identity();
+
+            let R_list = [
+                R_chain_index,
+                R_chain_middle,
+                R_chain_ring,
+                R_chain_pinky,
+                R_chain_thumb,
+            ];
+
+            for (i = 0; i < 5; i++) {
+                R_list[i].multiply(R_chain_leftupper);
+            }
+
+            for (i = 0; i < 15; i++) {
+                let bone_list = [
+                    "index",
+                    "middle",
+                    "ring",
+                    "pinky",
+                    "thumb",
+                    "Index",
+                    "Middle",
+                    "Ring",
+                    "Pinky",
+                    "Thumb",
+                ];
+                let bone_point_list = ["mcp", "pip", "dip", "tip"];
+                let remainder = i % 3;
+                let quotient = parseInt(i / 3);
+                let finger = bone_list[quotient];
+                let finger_point = finger + "_finger_" + bone_point_list[remainder];
+                let next_point = finger + "_finger_" + bone_point_list[remainder + 1];
+                let Bone =
+                    "mixamorigLeftHand" + bone_list[quotient + 5] + (remainder + 1);
+                let next_Bone =
+                    "mixamorigLeftHand" + bone_list[quotient + 5] + (remainder + 2);
+                let R = R_list[quotient];
+                SetRbyCalculatingJoints(
+                    hand_3d_landmarks[finger_point],
+                    hand_3d_landmarks[next_point],
+                    model.getObjectByName(Bone),
+                    model.getObjectByName(next_Bone),
+                    R
+                );
+            }
+        }
+        if (results.rightHandLandmarks) {
+            let hand_landmarks_dict = {};
+            results.rightHandLandmarks.forEach((landmark, i) => {
+                hand_landmarks_dict[index_to_name_hands[i]] = landmark;
+            });
+            let hand_3d_landmarks = update3dpose(
+                camera,
+                1.5,
+                new THREE.Vector3(1, 0, -1.5),
+                hand_landmarks_dict
+            );
+            let i = 0;
+            const gap_X = pose_right_wrist.x - hand_3d_landmarks["wrist"].x;
+            const gap_Y = pose_right_wrist.y - hand_3d_landmarks["wrist"].y;
+            const gap_Z = pose_right_wrist.z - hand_3d_landmarks["wrist"].z;
+
+            const jointWrist = hand_3d_landmarks["wrist"];
+            const jointIndex_mcp = hand_3d_landmarks["index_finger_mcp"];
+            const jointMiddle_mcp = hand_3d_landmarks["middle_finger_mcp"];
+            const jointPinky_mcp = hand_3d_landmarks["pinky_finger_mcp"];
+
+            const boneHand = model.getObjectByName("mixamorigRightHand");
+            const boneIndex1 = model.getObjectByName("mixamorigRightHandIndex1");
+            const boneMiddle1 = model.getObjectByName("mixamorigRightHandMiddle1");
+            const bonePinky1 = model.getObjectByName("mixamorigRightHandPinky1");
+
+            const v_middle = new THREE.Vector3().subVectors(
+                jointMiddle_mcp,
+                jointWrist
+            );
+
+            const v_hand_v = v_middle.clone().normalize();
+            const v_hand_index2pinky = new THREE.Vector3()
+                .subVectors(jointPinky_mcp, jointIndex_mcp)
+                .normalize();
+            const v_hand_w = new THREE.Vector3().crossVectors(
+                v_hand_index2pinky,
+                v_hand_v
+            );
+            const v_hand_u = new THREE.Vector3().crossVectors(v_hand_v, v_hand_w);
+            const R_MPhand = new THREE.Matrix4().makeBasis(
+                v_hand_u,
+                v_hand_v,
+                v_hand_w
+            );
+
+            const v_bonehand_v = boneMiddle1.clone().position.normalize();
+            const v_bonehand_index2pinky = new THREE.Vector3()
+                .subVectors(bonePinky1.position, boneIndex1.position)
+                .normalize();
+            const v_bonehand_w = new THREE.Vector3().crossVectors(
+                v_bonehand_index2pinky,
+                v_bonehand_v
+            );
+            const v_bonehand_u = new THREE.Vector3().crossVectors(
+                v_bonehand_v,
+                v_bonehand_w
+            );
+            const R_Modelhand = new THREE.Matrix4().makeBasis(
+                v_bonehand_u,
+                v_bonehand_v,
+                v_bonehand_w
+            );
+
+            const R_BonetoMP = R_MPhand.clone().multiply(
+                R_Modelhand.clone().transpose()
+            );
+            const R_toTpose = R_chain_rightupper.clone().transpose();
+            const R_wrist = R_BonetoMP.clone().premultiply(R_toTpose);
+            boneHand.quaternion.setFromRotationMatrix(R_wrist);
+
+            R_chain_rightupper.multiply(
+                new THREE.Matrix4().extractRotation(boneHand.matrix)
+            );
+            let R_chain_index = new THREE.Matrix4().identity();
+            let R_chain_middle = new THREE.Matrix4().identity();
+            let R_chain_ring = new THREE.Matrix4().identity();
+            let R_chain_pinky = new THREE.Matrix4().identity();
+            let R_chain_thumb = new THREE.Matrix4().identity();
+
+            let R_list = [
+                R_chain_index,
+                R_chain_middle,
+                R_chain_ring,
+                R_chain_pinky,
+                R_chain_thumb,
+            ];
+
+            for (i = 0; i < 5; i++) {
+                R_list[i].multiply(R_chain_rightupper);
+            }
+
+            for (i = 0; i < 15; i++) {
+                let bone_list = [
+                    "index",
+                    "middle",
+                    "ring",
+                    "pinky",
+                    "thumb",
+                    "Index",
+                    "Middle",
+                    "Ring",
+                    "Pinky",
+                    "Thumb",
+                ];
+                let bone_point_list = ["mcp", "pip", "dip", "tip"];
+                let remainder = i % 3;
+                let quotient = parseInt(i / 3);
+                let finger = bone_list[quotient];
+                let finger_point = finger + "_finger_" + bone_point_list[remainder];
+                let next_point = finger + "_finger_" + bone_point_list[remainder + 1];
+                let Bone =
+                    "mixamorigRightHand" + bone_list[quotient + 5] + (remainder + 1);
+                let next_Bone =
+                    "mixamorigRightHand" + bone_list[quotient + 5] + (remainder + 2);
+                let R = R_list[quotient];
+                SetRbyCalculatingJoints(
+                    hand_3d_landmarks[finger_point],
+                    hand_3d_landmarks[next_point],
+                    model.getObjectByName(Bone),
+                    model.getObjectByName(next_Bone),
+                    R
+                );
+            }
+        }
     }
+
 
     if (faceResults && faceResults.faceBlendshapes && faceResults.faceBlendshapes.length > 0) {
 
