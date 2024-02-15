@@ -1369,12 +1369,13 @@ function animate() {
         var faceOrientationQuaternion = new THREE.Quaternion();
         faceOrientationMatrix.decompose(new THREE.Vector3(), faceOrientationQuaternion, new THREE.Vector3());
         //console.log(faceOrientationMatrix, faceOrientationQuaternion);
-        var head = model.getObjectByName("mixamorigHead");
-        head.quaternion.set(faceOrientationQuaternion.x, faceOrientationQuaternion.y, faceOrientationQuaternion.z, faceOrientationQuaternion.w);
-        head.getWorldPosition(facemesh.position);
-        head.getWorldQuaternion(facemesh.quaternion);
-    }
+        // head.quaternion.set(faceOrientationQuaternion.x, faceOrientationQuaternion.y, faceOrientationQuaternion.z, faceOrientationQuaternion.w);
 
+    }
+    
+    var head = model.getObjectByName("mixamorigHead");
+    head.getWorldPosition(facemesh.position);
+    head.getWorldQuaternion(facemesh.quaternion);
 
     renderer.render(scene, camera);
 
