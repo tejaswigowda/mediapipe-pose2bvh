@@ -479,254 +479,6 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-//
-function mapHandLandmarks(landmarks, h, pose_left_wrist, pose_right_wrist) {
-    if (h == "left") {
-        let hand_landmarks_dict = {};
-        landmarks.forEach((landmark, i) => {
-            hand_landmarks_dict[index_to_name_hands[i]] = landmark;
-        });
-        let hand_3d_landmarks = update3dpose(
-            camera,
-            1.5,
-            new THREE.Vector3(1, 0, -1.5),
-            hand_landmarks_dict
-        );
-        let i = 0;
-        const jointWrist = hand_3d_landmarks["wrist"];
-        const jointIndex_mcp = hand_3d_landmarks["index_finger_mcp"];
-        const jointMiddle_mcp = hand_3d_landmarks["middle_finger_mcp"];
-        const jointPinky_mcp = hand_3d_landmarks["pinky_finger_mcp"];
-
-        const boneHand = model.getObjectByName("mixamorigLeftHand");
-        const boneIndex1 = model.getObjectByName("mixamorigLeftHandIndex1");
-        const boneMiddle1 = model.getObjectByName("mixamorigLeftHandMiddle1");
-        const bonePinky1 = model.getObjectByName("mixamorigLeftHandPinky1");
-
-        const v_middle = new THREE.Vector3().subVectors(
-            jointMiddle_mcp,
-            jointWrist
-        );
-
-        const v_hand_v = v_middle.clone().normalize();
-        const v_hand_index2pinky = new THREE.Vector3()
-            .subVectors(jointPinky_mcp, jointIndex_mcp)
-            .normalize();
-        const v_hand_w = new THREE.Vector3().crossVectors(
-            v_hand_index2pinky,
-            v_hand_v
-        );
-        const v_hand_u = new THREE.Vector3().crossVectors(v_hand_v, v_hand_w);
-        const R_MPhand = new THREE.Matrix4().makeBasis(
-            v_hand_u,
-            v_hand_v,
-            v_hand_w
-        );
-
-        const v_bonehand_v = boneMiddle1.clone().position.normalize();
-        const v_bonehand_index2pinky = new THREE.Vector3()
-            .subVectors(bonePinky1.position, boneIndex1.position)
-            .normalize();
-        const v_bonehand_w = new THREE.Vector3().crossVectors(
-            v_bonehand_index2pinky,
-            v_bonehand_v
-        );
-        const v_bonehand_u = new THREE.Vector3().crossVectors(
-            v_bonehand_v,
-            v_bonehand_w
-        );
-        const R_Modelhand = new THREE.Matrix4().makeBasis(
-            v_bonehand_u,
-            v_bonehand_v,
-            v_bonehand_w
-        );
-
-        const R_BonetoMP = R_MPhand.clone().multiply(
-            R_Modelhand.clone().transpose()
-        );
-        const R_toTpose = R_chain_leftupper.clone().transpose();
-        const R_wrist = R_BonetoMP.clone().premultiply(R_toTpose);
-        boneHand.quaternion.setFromRotationMatrix(R_wrist);
-
-        R_chain_leftupper.multiply(
-            new THREE.Matrix4().extractRotation(boneHand.matrix)
-        );
-        let R_chain_index = new THREE.Matrix4().identity();
-        let R_chain_middle = new THREE.Matrix4().identity();
-        let R_chain_ring = new THREE.Matrix4().identity();
-        let R_chain_pinky = new THREE.Matrix4().identity();
-        let R_chain_thumb = new THREE.Matrix4().identity();
-
-        let R_list = [
-            R_chain_index,
-            R_chain_middle,
-            R_chain_ring,
-            R_chain_pinky,
-            R_chain_thumb,
-        ];
-
-        for (i = 0; i < 5; i++) {
-            R_list[i].multiply(R_chain_leftupper);
-        }
-
-        for (i = 0; i < 15; i++) {
-            let bone_list = [
-                "index",
-                "middle",
-                "ring",
-                "pinky",
-                "thumb",
-                "Index",
-                "Middle",
-                "Ring",
-                "Pinky",
-                "Thumb",
-            ];
-            let bone_point_list = ["mcp", "pip", "dip", "tip"];
-            let remainder = i % 3;
-            let quotient = parseInt(i / 3);
-            let finger = bone_list[quotient];
-            let finger_point = finger + "_finger_" + bone_point_list[remainder];
-            let next_point = finger + "_finger_" + bone_point_list[remainder + 1];
-            let Bone =
-                "mixamorigLeftHand" + bone_list[quotient + 5] + (remainder + 1);
-            let next_Bone =
-                "mixamorigLeftHand" + bone_list[quotient + 5] + (remainder + 2);
-            let R = R_list[quotient];
-            SetRbyCalculatingJoints(
-                hand_3d_landmarks[finger_point],
-                hand_3d_landmarks[next_point],
-                model.getObjectByName(Bone),
-                model.getObjectByName(next_Bone),
-                R
-            );
-        }
-
-    }
-    else {
-        let hand_landmarks_dict = {};
-        landmarks.forEach((landmark, i) => {
-            hand_landmarks_dict[index_to_name_hands[i]] = landmark;
-        });
-        let hand_3d_landmarks = update3dpose(
-            camera,
-            1.5,
-            new THREE.Vector3(1, 0, -1.5),
-            hand_landmarks_dict
-        );
-        let i = 0;
-
-        const jointWrist = hand_3d_landmarks["wrist"];
-        const jointIndex_mcp = hand_3d_landmarks["index_finger_mcp"];
-        const jointMiddle_mcp = hand_3d_landmarks["middle_finger_mcp"];
-        const jointPinky_mcp = hand_3d_landmarks["pinky_finger_mcp"];
-
-        const boneHand = model.getObjectByName("mixamorigRightHand");
-        const boneIndex1 = model.getObjectByName("mixamorigRightHandIndex1");
-        const boneMiddle1 = model.getObjectByName("mixamorigRightHandMiddle1");
-        const bonePinky1 = model.getObjectByName("mixamorigRightHandPinky1");
-
-        const v_middle = new THREE.Vector3().subVectors(
-            jointMiddle_mcp,
-            jointWrist
-        );
-
-        const v_hand_v = v_middle.clone().normalize();
-        const v_hand_index2pinky = new THREE.Vector3()
-            .subVectors(jointPinky_mcp, jointIndex_mcp)
-            .normalize();
-        const v_hand_w = new THREE.Vector3().crossVectors(
-            v_hand_index2pinky,
-            v_hand_v
-        );
-        const v_hand_u = new THREE.Vector3().crossVectors(v_hand_v, v_hand_w);
-        const R_MPhand = new THREE.Matrix4().makeBasis(
-            v_hand_u,
-            v_hand_v,
-            v_hand_w
-        );
-
-        const v_bonehand_v = boneMiddle1.clone().position.normalize();
-        const v_bonehand_index2pinky = new THREE.Vector3()
-            .subVectors(bonePinky1.position, boneIndex1.position)
-            .normalize();
-        const v_bonehand_w = new THREE.Vector3().crossVectors(
-            v_bonehand_index2pinky,
-            v_bonehand_v
-        );
-        const v_bonehand_u = new THREE.Vector3().crossVectors(
-            v_bonehand_v,
-            v_bonehand_w
-        );
-        const R_Modelhand = new THREE.Matrix4().makeBasis(
-            v_bonehand_u,
-            v_bonehand_v,
-            v_bonehand_w
-        );
-
-        const R_BonetoMP = R_MPhand.clone().multiply(
-            R_Modelhand.clone().transpose()
-        );
-        const R_toTpose = R_chain_rightupper.clone().transpose();
-        const R_wrist = R_BonetoMP.clone().premultiply(R_toTpose);
-        boneHand.quaternion.setFromRotationMatrix(R_wrist);
-
-        R_chain_rightupper.multiply(
-            new THREE.Matrix4().extractRotation(boneHand.matrix)
-        );
-        let R_chain_index = new THREE.Matrix4().identity();
-        let R_chain_middle = new THREE.Matrix4().identity();
-        let R_chain_ring = new THREE.Matrix4().identity();
-        let R_chain_pinky = new THREE.Matrix4().identity();
-        let R_chain_thumb = new THREE.Matrix4().identity();
-
-        let R_list = [
-            R_chain_index,
-            R_chain_middle,
-            R_chain_ring,
-            R_chain_pinky,
-            R_chain_thumb,
-        ];
-
-        for (i = 0; i < 5; i++) {
-            R_list[i].multiply(R_chain_rightupper);
-        }
-
-        for (i = 0; i < 15; i++) {
-            let bone_list = [
-                "index",
-                "middle",
-                "ring",
-                "pinky",
-                "thumb",
-                "Index",
-                "Middle",
-                "Ring",
-                "Pinky",
-                "Thumb",
-            ];
-            let bone_point_list = ["mcp", "pip", "dip", "tip"];
-            let remainder = i % 3;
-            let quotient = parseInt(i / 3);
-            let finger = bone_list[quotient];
-            let finger_point = finger + "_finger_" + bone_point_list[remainder];
-            let next_point = finger + "_finger_" + bone_point_list[remainder + 1];
-            let Bone =
-                "mixamorigRightHand" + bone_list[quotient + 5] + (remainder + 1);
-            let next_Bone =
-                "mixamorigRightHand" + bone_list[quotient + 5] + (remainder + 2);
-            let R = R_list[quotient];
-            SetRbyCalculatingJoints(
-                hand_3d_landmarks[finger_point],
-                hand_3d_landmarks[next_point],
-                model.getObjectByName(Bone),
-                model.getObjectByName(next_Bone),
-                R
-            );
-        }
-    }
-}
-
 
 function animate() {
     requestAnimationFrame(animate);
@@ -745,11 +497,9 @@ function animate() {
     }
 
     if (holisticResults) {
-
         let R_chain_rightupper, R_chain_leftupper;
         let pose_left_wrist, pose_right_wrist;
         let results = holisticResults;
-
         if (results.poseLandmarks) {
             // pose
             let pose_landmarks_dict = {};
@@ -760,7 +510,7 @@ function animate() {
 
             let pos_3d_landmarks = update3dpose(
                 camera,
-                1.5,
+                2.5,
                 new THREE.Vector3(1, 0, -1.5),
                 pose_landmarks_dict
             );
@@ -1102,7 +852,7 @@ function animate() {
             });
             let hand_3d_landmarks = update3dpose(
                 camera,
-                1.5,
+                2.5,
                 new THREE.Vector3(1, 0, -1.5),
                 hand_landmarks_dict
             );
@@ -1227,7 +977,7 @@ function animate() {
             });
             let hand_3d_landmarks = update3dpose(
                 camera,
-                1.5,
+                2.5,
                 new THREE.Vector3(1, 0, -1.5),
                 hand_landmarks_dict
             );
