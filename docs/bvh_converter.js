@@ -180,7 +180,7 @@ function generateBVH(jointInfo, motionData) {
 
     // Add the MOTION section with the appropriate number of frames and frame time
     numFramesrecorded = motionData.length;
-    frameTime = 1/40;
+    frameTime = 1/bvhRecorderFrequency;
     console.log(numFramesrecorded);
     bvhContent += "MOTION\n";
     bvhContent += `Frames: ${numFramesrecorded}\n`;

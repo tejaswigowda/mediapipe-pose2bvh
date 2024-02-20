@@ -32,7 +32,7 @@
     var fbxfile = args[0] || "ybot.fbx";
     var trackingLine;
     var line_tracker = []; // Start with an empty array
-
+    var bvhRecorderFrequency = 30;
 
     var facemesh;
 
@@ -104,13 +104,14 @@
       } else {
         clearInterval(intervalId);
       }
-    }, 25);
+    }, 1000/bvhRecorderFrequency);
   }
 
   function stopRecording() {
     recording = false;
 
     // Call generateBVH and save the BVH file
+    console.log(recordedMotionData.length);
     const bvhContent = generateBVH(firstFrameJointData, recordedMotionData);
     const blob = new Blob([bvhContent], { type: "text/plain;charset=utf-8" });
     const date = new Date();
