@@ -10,6 +10,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <script src="three.min.js"></script>
+  <script src="bvh_converter.js"></script>
+  
 
   <script>
     var faceLandmarker;
@@ -28,7 +32,7 @@
     var fbxfile = args[0] || "ybot.fbx";
     var trackingLine;
     var line_tracker = []; // Start with an empty array
-
+    var bvhRecorderFrequency = 30;
 
     var facemesh;
 
@@ -64,8 +68,70 @@
   transform: rotate(-5deg);" autoplay></video>
 
 
+<script>
+  let isRecording = false;
+
+  function toggleRecording() {
+    const recordButton = document.getElementById('recordButton');
+    const recordIcon = recordButton.querySelector('i');
+    if (!isRecording) {
+      startRecording();
+      recordButton.classList.remove('green');
+      recordButton.classList.add('red');
+      recordIcon.textContent = 'stop';
+      recordButton.innerHTML = recordButton.innerHTML.replace('Record BVH', 'Stop Recording');
+    } else {
+      stopRecording();
+      recordButton.classList.remove('red');
+      recordButton.classList.add('green');
+      recordIcon.textContent = 'fiber_manual_record';
+      recordButton.innerHTML = recordButton.innerHTML.replace('Stop Recording', 'Record BVH');
+    }
+
+    isRecording = !isRecording;
+  }
+  function startRecording() {
+    recording = true;
+    recordedMotionData = [];
+
+    // Store the first frame's joint data
+    firstFrameJointData = updateMotionData();
+
+    // Call updateMotionData every 50ms
+    const intervalId = setInterval(() => {
+      if (recording) {
+        updateMotionData();
+      } else {
+        clearInterval(intervalId);
+      }
+    }, 1000/bvhRecorderFrequency);
+  }
+
+  function stopRecording() {
+    recording = false;
+
+    // Call generateBVH and save the BVH file
+    console.log(recordedMotionData.length);
+    const bvhContent = generateBVH(firstFrameJointData, recordedMotionData);
+    const blob = new Blob([bvhContent], { type: "text/plain;charset=utf-8" });
+    const date = new Date();
+    const dateString = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
+    const file_name = `MMcap_bvh_${dateString}.bvh`;
+    saveAs(blob, file_name);
+  }
+
+</script>
+
+
+<button id="recordButton" style="position:absolute; left:0; bottom:0px; z-index: 1001;"
+    class="main btn waves-effect waves-light green black-text large" onclick="toggleRecording()">
+    <i class="material-icons" style="vertical-align:middle;font-size:200%">fiber_manual_record</i>
+    Record BVH
+  </button>
+
   <script type="module" src="./script.js"></script>
   <script type="module" src="threejsscene.js"></script>
+  
 
 </body>
 
