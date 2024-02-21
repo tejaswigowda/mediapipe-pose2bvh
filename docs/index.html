@@ -32,7 +32,7 @@
     var fbxfile = args[0] || "ybot.fbx";
     var trackingLine;
     var line_tracker = []; // Start with an empty array
-    var bvhRecorderFrequency = 30;
+    var bvhRecorderFrequency = 20;
 
     var facemesh;
 
@@ -90,21 +90,14 @@
 
     isRecording = !isRecording;
   }
+  var firstFrameJointData;
   function startRecording() {
     recording = true;
     recordedMotionData = [];
 
     // Store the first frame's joint data
-    firstFrameJointData = updateMotionData();
+    firstFrameJointData = updateMotionData(true);
 
-    // Call updateMotionData every 50ms
-    const intervalId = setInterval(() => {
-      if (recording) {
-        updateMotionData();
-      } else {
-        clearInterval(intervalId);
-      }
-    }, 1000/bvhRecorderFrequency);
   }
 
   function stopRecording() {
@@ -116,7 +109,7 @@
     const blob = new Blob([bvhContent], { type: "text/plain;charset=utf-8" });
     const date = new Date();
     const dateString = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
-    const file_name = `MMcap_bvh_${dateString}.bvh`;
+    const file_name = `Mocap_bvh_${dateString}.bvh`;
     saveAs(blob, file_name);
   }
 

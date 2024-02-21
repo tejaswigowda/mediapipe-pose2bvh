@@ -10,7 +10,7 @@ function quaternionToEulerDegrees(q) {
     return [euler.x * radToDeg, euler.y * radToDeg, euler.z * radToDeg];
 }
 
-function updateMotionData() {
+function updateMotionData(doret) {
     const jointInfo = [];
     const rootJoint = model.getObjectByName("mixamorigHips");
     if (rootJoint) {
@@ -18,13 +18,18 @@ function updateMotionData() {
         traverseHierarchy(rootJoint, jointInfo, 0);
 
         if (recording) {
-            
             recordedMotionData.push(jointInfo);
         }
     } else {
         console.error("Root joint not found!");
     }
-    return jointInfo;
+    if(doret){
+        return jointInfo;
+    }
+    else{
+        return;
+    
+    }
 }
 
 

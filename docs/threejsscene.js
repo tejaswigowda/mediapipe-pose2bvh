@@ -1379,9 +1379,15 @@ function animate() {
 
 
     renderer.render(scene, camera);
-
+    // Call updateMotionData every 50ms
+    if (Date.now() - lastFrameTime > 1000/bvhRecorderFrequency && recording) {
+        lastFrameTime = Date.now();
+        setTimeout(updateMotionData, 0);
+    }
     // stats.update();
 }
+
+var lastFrameTime = -1;
 
 function init_bvh() {
     // camera_bvh = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
