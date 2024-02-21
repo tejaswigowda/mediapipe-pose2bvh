@@ -471,6 +471,13 @@ function onWindowResize() {
 var flag = true;
 function animate() {
     requestAnimationFrame(animate);
+    if (performance.now() - lastFrameTime - lastUpdateFrameTime > 1000/bvhRecorderFrequency && recording) {
+        lastFrameTime = performance.now();
+        setTimeout(function(){
+            updateMotionData(false);
+
+        }, 0);
+    }
 
     let R_chain_rightupper, R_chain_leftupper;
 
@@ -1120,15 +1127,15 @@ function animate() {
     head.getWorldQuaternion(facemesh.quaternion);
 
     renderer.render(scene, camera);
-    // Call updateMotionData every 50ms
-    if (Date.now() - lastFrameTime > 1000/bvhRecorderFrequency && recording) {
-        lastFrameTime = Date.now();
-        setTimeout(updateMotionData, 0);
-    }
 
+
+    if(recording){
+        document.getElementById("recdetails").innerHTML = "Recording... " + ((Date.now() - recordStartTime)/1000).toFixed(2) + " s (" + recordedMotionData.length + " frames)";
+    }
 
     // stats.update();
 }
+
 
 
 function init_bvh() {

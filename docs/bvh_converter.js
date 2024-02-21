@@ -11,6 +11,9 @@ function quaternionToEulerDegrees(q) {
 }
 
 function updateMotionData(doret) {
+    var time = performance.now()
+
+
     const jointInfo = [];
     const rootJoint = model.getObjectByName("mixamorigHips");
     if (rootJoint) {
@@ -23,6 +26,9 @@ function updateMotionData(doret) {
     } else {
         console.error("Root joint not found!");
     }
+    var time2 = performance.now()
+    lastUpdateFrameTime = time2 - time;
+    console.log(time2, time, lastUpdateFrameTime);
     if(doret){
         return jointInfo;
     }

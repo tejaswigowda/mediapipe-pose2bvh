@@ -34,8 +34,10 @@
     var line_tracker = []; // Start with an empty array
     var bvhRecorderFrequency = 20;
     var lastFrameTime = -1;
+    var recordStartTime = -1;
 
     var facemesh;
+    var lastUpdateFrameTime = 0;
 
   </script>
 
@@ -87,6 +89,8 @@
       recordButton.classList.add('green');
       recordIcon.textContent = 'fiber_manual_record';
       recordButton.innerHTML = recordButton.innerHTML.replace('Stop Recording', 'Record BVH');
+      recordStartTime = -1;
+      document.getElementById('recdetails').innerHTML = "Not Recording...";
     }
 
     isRecording = !isRecording;
@@ -95,6 +99,7 @@
   function startRecording() {
     recording = true;
     recordedMotionData = [];
+    recordStartTime = Date.now();
   }
 
   var recording = false;
@@ -113,7 +118,9 @@
 
 </script>
 
-
+<p id="recdetails" style="z-index:9999;position:fixed;bottom:20px;left:5px;color:white;padding:10px;">
+  Not Recording...
+</p>
 <button id="recordButton" style="position:absolute; left:0; bottom:0px; z-index: 1001;"
     class="main btn waves-effect waves-light green black-text large" onclick="toggleRecording()">
     <i class="material-icons" style="vertical-align:middle;font-size:200%">fiber_manual_record</i>
