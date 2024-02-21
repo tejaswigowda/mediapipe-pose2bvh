@@ -23,12 +23,12 @@ function updateMotionData(doret) {
     } else {
         console.error("Root joint not found!");
     }
+    console.log(recordedMotionData);
     if(doret){
         return jointInfo;
     }
     else{
         return;
-    
     }
 }
 

@@ -1138,7 +1138,6 @@ function animate() {
     // stats.update();
 }
 
-var lastFrameTime = -1;
 
 function init_bvh() {
     // camera_bvh = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
