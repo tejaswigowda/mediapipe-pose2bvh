@@ -95,12 +95,9 @@
   function startRecording() {
     recording = true;
     recordedMotionData = [];
-
-    // Store the first frame's joint data
-    firstFrameJointData = updateMotionData(true);
-
   }
 
+  var recording = false;
   function stopRecording() {
     recording = false;
 

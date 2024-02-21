@@ -17,13 +17,12 @@ function updateMotionData(doret) {
         // console.log("Root joint found!", rootJoint);
         traverseHierarchy(rootJoint, jointInfo, 0);
 
-        if (recording) {
+        if (!doret || recording) {
             recordedMotionData.push(jointInfo);
         }
     } else {
         console.error("Root joint not found!");
     }
-    console.log(recordedMotionData);
     if(doret){
         return jointInfo;
     }
@@ -143,7 +142,7 @@ function traverseHierarchy(joint, jointInfo, level = 0) {
 // const rootJoint = model.getObjectByName("mixamorigHips");
 // traverseHierarchy(rootJoint, jointInfo);
 function generateBVH(jointInfo, motionData) {
-    console.log(jointInfo);
+   // console.log(jointInfo);
     let bvhContent = "HIERARCHY\n";
 
     jointInfo.forEach((joint, index) => {

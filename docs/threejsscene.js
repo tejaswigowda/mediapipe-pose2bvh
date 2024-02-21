@@ -387,33 +387,19 @@ function init() {
         model.children[2].material.color.set(0x222222);
 
         mixer = new THREE.AnimationMixer(object);
-        // console.log(mixer);
         object.traverse(function (child) {
-            // console.log(child);
             if (child.name === "mixamorigHead") {
                 child.traverse(function (child1) {
                     child1.scale.set(.9, .85, .67);
-                    //child1.scale.set(0, 0, 0);
                 });
-
             }
-            if (child.isMesh) {
-                //child.castShadow = true;
-                //child.receiveShadow = true;
-
-            }
-            //console.log(child.name);
         });
 
         scene.add(object);
 
-        var lineMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
-        var lineGeometry = new THREE.BufferGeometry();
-
-        lineGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(line_tracker), 3));
-        trackingLine = new THREE.Line(lineGeometry, lineMaterial);
-        scene.add(trackingLine);
+        // Store the first frame's joint data
     });
+
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -482,6 +468,7 @@ function onWindowResize() {
 }
 
 
+var flag = true;
 function animate() {
     requestAnimationFrame(animate);
 
@@ -495,6 +482,9 @@ function animate() {
         if (head && facemesh) {
             head.getWorldPosition(facemesh.position);
             head.getWorldQuaternion(facemesh.quaternion);
+        }
+        if(firstFrameJointData === undefined){
+            firstFrameJointData = updateMotionData(true);
         }
     }
 
@@ -1135,6 +1125,8 @@ function animate() {
         lastFrameTime = Date.now();
         setTimeout(updateMotionData, 0);
     }
+
+
     // stats.update();
 }
 
