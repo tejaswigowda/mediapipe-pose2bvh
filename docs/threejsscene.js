@@ -261,6 +261,8 @@ import { MeshoptDecoder } from "https://cdn.jsdelivr.net/gh/mesquite-mocap/mesqu
 import { FBXLoader } from "https://cdn.jsdelivr.net/gh/mesquite-mocap/mesquite.cc@latest/build/FBXLoader.js";
 //import { FBXLoader } from "./build/FBXLoader.js";
 import { BVHLoader } from "https://cdn.jsdelivr.net/gh/mesquite-mocap/mesquite.cc@latest/build/BVHLoader.js";
+
+
 // import {BVHLoader} from "./build/BVHLoader.js"
 // import {vec3} from "https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/3.4.2/gl-matrix-min.js";
 
@@ -1128,9 +1130,15 @@ function animate() {
     head.getWorldQuaternion(facemesh.quaternion);
 
     renderer.render(scene, camera);
-
+    // Call updateMotionData every 50ms
+    if (Date.now() - lastFrameTime > 1000/bvhRecorderFrequency && recording) {
+        lastFrameTime = Date.now();
+        setTimeout(updateMotionData, 0);
+    }
     // stats.update();
 }
+
+var lastFrameTime = -1;
 
 function init_bvh() {
     // camera_bvh = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
