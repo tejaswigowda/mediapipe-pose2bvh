@@ -107,7 +107,7 @@
     recording = false;
 
     // Call generateBVH and save the BVH file
-    console.log(recordedMotionData.length);
+    // console.log(recordedMotionData.length);
     const bvhContent = generateBVH(firstFrameJointData, recordedMotionData);
     const blob = new Blob([bvhContent], { type: "text/plain;charset=utf-8" });
     const date = new Date();

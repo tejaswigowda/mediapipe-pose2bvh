@@ -28,7 +28,7 @@ function updateMotionData(doret) {
     }
     var time2 = performance.now()
     lastUpdateFrameTime = time2 - time;
-    console.log(time2, time, lastUpdateFrameTime);
+    // console.log(time2, time, lastUpdateFrameTime);
     if(doret){
         return jointInfo;
     }
@@ -191,7 +191,7 @@ function generateBVH(jointInfo, motionData) {
     // Add the MOTION section with the appropriate number of frames and frame time
     numFramesrecorded = motionData.length;
     frameTime = 1/bvhRecorderFrequency;
-    console.log(numFramesrecorded);
+    // console.log(numFramesrecorded);
     bvhContent += "MOTION\n";
     bvhContent += `Frames: ${numFramesrecorded}\n`;
     bvhContent += `Frame Time: ${frameTime}\n`;
