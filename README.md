@@ -50,7 +50,10 @@ All code is in the `/docs` folder.
 
 ![File Structure](./imgs/files.png){ width=20% }
 
-`index.html` is the main file. The main js code is in `script.js`. The `three.min.js` library is used for 3D rendering. All results are stored in [https://github.com/tejaswigowda/mediapipe-pose2bvh/blob/c60e43773ddb2e8070ad7d274e6b1bf338ab5747/docs/script.js#L87](`holisticResults`).
+`index.html` is the main file. The main js code is in `script.js`. The `three.min.js` library is used for 3D rendering. All results are stored in:
+
+1. `holisticResults` [https://github.com/tejaswigowda/mediapipe-pose2bvh/blob/c60e43773ddb2e8070ad7d274e6b1bf338ab5747/docs/script.js#L87]
+2. `faceResults` [https://github.com/tejaswigowda/mediapipe-pose2bvh/blob/f73e1611e246814512042e3c5801241dceb3eb2a/docs/script.js#L59].
 
 ## License
 
