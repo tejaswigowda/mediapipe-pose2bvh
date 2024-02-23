@@ -36,33 +36,56 @@ The MediaPipe Pose model outputs the 3D coordinates of 33 keypoints on the human
 
 # Key Features
 
-- Converts the output of the MediaPipe Pose model to a BVH file.
-- Generates blendshapes for the face.
-- Hand tracking.
+1. Converts the output of the MediaPipe Pose model to a BVH file.
+
+2. Generates blendshapes for the face.
+
+3. Hand tracking.
+
+4. Plug and play into any 3D software that supports BVH and blendshapes.
+5. No installation required. Just open the HTML file in the browser.
 
 # Installation
 
 This software is released under the GNU General Public License version 3 (GPLv3). The complete license is provided as LICENSE.txt
 
+# Dependencies
+
+A modern web browser that supports the WebAssembly. Tested on Chrome and Firefox. For development, you will need Node.js and http-server.
+
+# Usage
+
+```bash
+git clone https://github.com/tejaswigowda/mediapipe-pose2bvh.git
+cd mediapipe-pose2bvh
+http-server
+```
+
+Open the browser and go to `http://localhost:8080/`. To record use 
+![Start Record](./start.png).
+
+To stop recording use
+![Stop Record](./stop.png).
+
+The BVH file and the blendshapes will be generated and downloaded.
 
 
 
-# Mathematics
+# Architecture
 
-Single dollars ($) are required for inline mathematics e.g. $f(x) = e^{\pi/x}$
+The software is written in JavaScript and uses the three.js library for 3D rendering. The software uses the MediaPipe Pose model to get the 3D coordinates of the keypoints. The 3D coordinates are then used to generate the BVH file and the blendshapes. The BVH file and the blendshapes are then downloaded.
 
-Double dollars make self-standing equations:
+# Demo
 
-$$\Theta(x) = \left\{\begin{array}{l}
-0\textrm{ if } x < 0\cr
-1\textrm{ else}
-\end{array}\right.$$
+[![Demo](./demo.gif)](https://tejaswigowda.github.io/mediapipe-pose2bvh/)
 
-You can also use plain \LaTeX for equations
-\begin{equation}\label{eq:fourier}
-\hat f(\omega) = \int_{-\infty}^{\infty} f(x) e^{i\omega x} dx
-\end{equation}
-and refer to \autoref{eq:fourier} from text.
+
+# Future Work
+
+The software currently supports only the MediaPipe Pose model. In the future, support for other pose estimation models will be added. The software currently supports only the BVH format. In the future, support for other animation formats will be added. The software currently supports only the blendshapes for the face. In the future, support for blendshapes for the body will be added.
+
+# Acknowledgements
+
 
 # Citations
 

@@ -1,4 +1,4 @@
-# Realtime Monocular Webcam Video to Biovision Hierarchy(BVH) format 
+# Realtime Monocular Webcam Video to Biovision Hierarchy (BVH) format 
 
 This is a simple tool to convert the output of the MediaPipe Pose model to a BVH file. The BVH file can be used to animate a 3D character in Blender or any other 3D software that supports the BVH format. It also generates blendshapes for the face. The blendshapes can be used to animate a 3D character's face in Blender or any other 3D software that supports blendshapes.
 
