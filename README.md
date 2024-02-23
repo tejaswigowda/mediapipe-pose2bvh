@@ -2,6 +2,32 @@
 
 This is a simple tool to convert the output of the MediaPipe Pose model to a BVH file. The BVH file can be used to animate a 3D character in Blender or any other 3D software that supports the BVH format. It also generates blendshapes for the face. The blendshapes can be used to animate a 3D character's face in Blender or any other 3D software that supports blendshapes.
 
+## Key Features
+1. Converts the output of the MediaPipe Pose model to a BVH file.
+2. Generates blendshapes for the face.
+3. Hand tracking.
+4. Plug and play into any 3D software that supports BVH and blendshapes.
+5. No installation required. Just open the HTML file in the browser.
+
+## Demo
+
+[![Demo](./demo.gif)[./demo.gif]]
+
+Or try it out [here](https://tejaswigowda.github.io/mediapipe-pose2bvh/).
+
+
+## Dependencies
+A modern web browser that supports the WebAssembly. Tested on Chrome and Firefox.
+
+For development:
+- Node.js [https://nodejs.org/]
+- http-server [https://www.npmjs.com/package/http-server]
+    ```
+    npm install --global http-server
+    ```
+
+
+
 ## Usage
     
 ```bash

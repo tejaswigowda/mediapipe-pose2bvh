@@ -10,17 +10,13 @@ tags:
   - animation
 authors:
   - name: 'Tejaswi Gowda'
-    orcid: 0000-0000-0000-0000
+    orcid: 0000-0002-0896-6526
     equal-contrib: true
     affiliation: "1"
    
 affiliations:
  - name: "Arizona State University, Tempe, AZ, USA"
    index: 1
- - name: Institution Name, Country
-   index: 2
- - name: Independent Researcher, Country
-   index: 3
 date: 25 February 2024
 bibliography: paper.bib
 
