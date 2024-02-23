@@ -48,6 +48,10 @@ The MediaPipe Pose model outputs the 3D coordinates of 33 keypoints on the human
 
 All code is in the `/docs` folder. 
 
+![File Structure](./imgs/files.png){ width=20% }
+
+`index.html` is the main file. The main js code is in `script.js`. The `three.min.js` library is used for 3D rendering. All results are stored in `holisticResults` 
+
 ## License
 
 This software is released under the GNU General Public License version 3 (GPLv3). The complete license is provided as [LICENSE](LICENSE) file.
