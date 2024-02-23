@@ -44,7 +44,7 @@ Open the browser and go to `http://localhost:8080/` and upload the JSON file gen
 
 All code is in the `/docs` folder. 
 
-![File Structure](./imgs/files.png){ width=20% }
+![File Structure](./docs/imgs/files.png){ width=20% }
 
 `index.html` is the main file. The main js code is in `script.js`. The `three.min.js` library is used for 3D rendering. All results are stored in:
 
