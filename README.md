@@ -11,6 +11,8 @@ This is a simple tool to convert the output of the MediaPipe Pose model to a BVH
 
 ## Demo
 
+(click on the image to view the demo)
+
 [![Demo](./demo.gif)](https://tejaswigowda.github.io/mediapipe-pose2bvh/)
 
 
