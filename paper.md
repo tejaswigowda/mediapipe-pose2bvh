@@ -37,10 +37,15 @@ The MediaPipe Pose model outputs the 3D coordinates of 33 keypoints on the human
 # Key Features
 
 1. Converts the output of the MediaPipe Pose model to a BVH file.
+![Caption for example figure.](figure.png){ width=20% }
+
 
 2. Generates blendshapes for the face.
+![Caption for example figure.](figure.png){ width=20% }
 
 3. Hand tracking.
+![Caption for example figure.](figure.png){ width=20% }
+
 
 4. Plug and play into any 3D software that supports BVH and blendshapes.
 5. No installation required. Just open the HTML file in the browser.
@@ -83,6 +88,12 @@ The software is written in JavaScript and uses the three.js library for 3D rende
 # Future Work
 
 The software currently supports only the MediaPipe Pose model. In the future, support for other pose estimation models will be added. The software currently supports only the BVH format. In the future, support for other animation formats will be added. The software currently supports only the blendshapes for the face. In the future, support for blendshapes for the body will be added.
+
+The software currently estimates distance from the camera. In the future, support for estimating distance using the iris model will be added[1].
+
+Fusing multiple camera feeds to estimate 3D coordinates of the keypoints will be added[2].
+
+
 
 # Acknowledgements
 
