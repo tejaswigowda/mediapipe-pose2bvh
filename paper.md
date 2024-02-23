@@ -80,11 +80,15 @@ The BVH file and the blendshapes will be generated and downloaded.
 
 The software is written in JavaScript and uses the three.js library for 3D rendering. The software uses the MediaPipe Pose model to get the 3D coordinates of the keypoints. The 3D coordinates are then used to generate the BVH file and the blendshapes. The BVH file and the blendshapes are then downloaded.
 
-![Caption for example figure.](./docs/imgs/arch.png){ width=20% }
+![Data flow](./docs/imgs/arch.png){ width=20% }
+
+
 
 # Demo
 
 [![Demo](./demo.gif)](https://tejaswigowda.github.io/mediapipe-pose2bvh/)
+
+Go to [https://tejaswigowda.github.io/mediapipe-pose2bvh/](https://tejaswigowda.github.io/mediapipe-pose2bvh/) and enable the camera. The 3D character will start animating based on your body movements. The 3D character's face will also animate based on your facial expressions.
 
 # Applications
 
