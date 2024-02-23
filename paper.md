@@ -17,7 +17,7 @@ authors:
 affiliations:
  - name: "Arizona State University, Tempe, AZ, USA"
    index: 1
-date: 25 February 2024
+date: 22 February 2024
 bibliography: paper.bib
 
 # Optional fields if submitting to a AAS journal too, see this blog post:
