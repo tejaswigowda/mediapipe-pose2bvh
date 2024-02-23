@@ -53,6 +53,8 @@ All code is in the `/docs` folder.
 
 BVH file is generated in `generateBVH()` function [https://github.com/tejaswigowda/mediapipe-pose2bvh/blob/b1561a7a162c6b45968fe507852c18deaa4af32b/docs/bvh_converter.js#L150].
 
+You can change the model (currently `ybot.fbx`). You can change the facemodel (currently `scene.glb`). Both can be edited using the three.js editor [https://threejs.org/editor/].
+
 ## License
 
 This software is released under the GNU General Public License version 3 (GPLv3). The complete license is provided as [LICENSE](LICENSE) file.
