@@ -1,5 +1,5 @@
 ---
-title: 'Mediapipe to BioVision Hierarchy (BVH) Converter'
+title: 'Realtime Web-based Monocular Camera Feed to Biovision Hierarchy (BVH) format'
 tags:
   - JavaScript
   - three.js
