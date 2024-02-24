@@ -262,6 +262,10 @@ import { FBXLoader } from "https://cdn.jsdelivr.net/gh/mesquite-mocap/mesquite.c
 //import { FBXLoader } from "./build/FBXLoader.js";
 import { BVHLoader } from "https://cdn.jsdelivr.net/gh/mesquite-mocap/mesquite.cc@latest/build/BVHLoader.js";
 
+var stats = new Stats();
+// add to the DOM
+document.body.appendChild(stats.dom);
+stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
 
 // import {BVHLoader} from "./build/BVHLoader.js"
 // import {vec3} from "https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/3.4.2/gl-matrix-min.js";
@@ -1133,7 +1137,7 @@ function animate() {
         document.getElementById("recdetails").innerHTML = "Recording... " + ((Date.now() - recordStartTime)/1000).toFixed(2) + " s (" + recordedMotionData.length + " frames)";
     }
 
-    // stats.update();
+    stats.update();
 }
 
 
