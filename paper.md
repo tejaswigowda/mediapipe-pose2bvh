@@ -86,7 +86,7 @@ The software is written in JavaScript and uses the three.js library for 3D rende
 
 # Demo
 
-[![Demo](./demo.gif)](https://tejaswigowda.github.io/mediapipe-pose2bvh/)
+[![Demo](./demo.png)](https://tejaswigowda.github.io/mediapipe-pose2bvh/)
 
 Go to [https://tejaswigowda.github.io/mediapipe-pose2bvh/](https://tejaswigowda.github.io/mediapipe-pose2bvh/) and enable the camera. The 3D character will start animating based on your body movements. The 3D character's face will also animate based on your facial expressions.
 
