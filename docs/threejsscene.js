@@ -265,6 +265,10 @@ import { BVHLoader } from "https://cdn.jsdelivr.net/gh/mesquite-mocap/mesquite.c
 var stats = new Stats();
 // add to the DOM
 document.body.appendChild(stats.dom);
+// position the stats panel
+stats.dom.style.position = "fixed";
+stats.dom.style.top = "0px";
+stats.dom.style.right = "0px";
 stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
 
 // import {BVHLoader} from "./build/BVHLoader.js"

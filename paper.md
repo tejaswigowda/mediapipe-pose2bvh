@@ -27,7 +27,7 @@ This is a simple tool to convert the output of the MediaPipe Pose model to a BVH
 
 # Statement of need
 
-The MediaPipe Pose model outputs the 3D coordinates of 33 keypoints on the human body[@mediapipe]. The keypoints include the 25 keypoints of the body, 21 keypoints of the left hand, 21 keypoints of the right hand[@mediapipe-hand], and 468 keypoints of the face[@mediapipe-face]. The 3D coordinates of these keypoints can be used to animate a 3D character in Blender or any other 3D software that supports the BVH format. The 3D coordinates of the face keypoints can be used to generate blendshapes for the face. The blendshapes can be used to animate a 3D character's face in Blender or any other 3D software that supports blendshapes. Many commercial tools exist to generate BVH from pre-recorded videos. However, there are no tools that can generate BVH in real-time from a monocular camera feed. This software fills that gap. The software is released under the GNU General Public License version 3 (GPLv3).
+The MediaPipe Pose model outputs the 3D coordinates of 33 keypoints on the human body[@mediapipe]. The keypoints include the 25 keypoints of the body, 21 keypoints of the left hand, 21 keypoints of the right hand[@mediapipehand], and 468 keypoints of the face[@mediapipeface]. The 3D coordinates of these keypoints can be used to animate a 3D character in Blender or any other 3D software that supports the BVH format. The 3D coordinates of the face keypoints can be used to generate blendshapes for the face. The blendshapes can be used to animate a 3D character's face in Blender or any other 3D software that supports blendshapes. Many commercial tools exist to generate BVH from pre-recorded videos. However, there are no tools that can generate BVH in real-time from a monocular camera feed. This software fills that gap. The software is released under the GNU General Public License version 3 (GPLv3)[@gnugpl].
 
 # Key Features
 
@@ -41,7 +41,8 @@ The MediaPipe Pose model outputs the 3D coordinates of 33 keypoints on the human
 
 # Dependencies
 
-A modern web browser that supports the WebAssembly. Tested on Chrome and Firefox. For development, you will need Node.js and http-server.
+A modern web browser that supports the WebAssembly (WebRTC support needed for streaming). Tested on Chrome and Firefox. Also works on mobile Chrome, albeit at a lower frame rarte. For development, you will need Node.js[@nodejs] and http-server[@httpserver].
+
 
 # Usage
 
