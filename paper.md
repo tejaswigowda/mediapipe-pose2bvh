@@ -11,7 +11,6 @@ tags:
 authors:
   - name: 'Tejaswi Gowda'
     orcid: 0000-0002-0896-6526
-    equal-contrib: true
     affiliation: "1"
    
 affiliations:
