@@ -102,20 +102,6 @@ The software currently supports only the MediaPipe Pose model. In the future, su
 
 Thanks to the MediaPipe team for developing the pose estimation model. Thanks to the three.js team for developing the 3D rendering library. Thanks to Assegid Kidane, Siva Munaganuru, Varun Mullangi and the rest of the AME team for testing the software.
 
-# Citations
-
-Citations to entries in paper.bib should be in
-[rMarkdown](http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html)
-format.
-
-If you want to cite a software repository URL (e.g. something on GitHub without a preferred
-citation) then you can do it with the example BibTeX entry below for @fidgit.
-
-For a quick reference, the following citation commands can be used:
-- `@author:2001`  ->  "Author et al. (2001)"
-- `[@author:2001]` -> "(Author et al., 2001)"
-- `[@author1:2001; @author2:2001]` -> "(Author1 et al., 2001; Author2 et al., 2002)"
-
 # References
 
 <div id="refs"></div>
