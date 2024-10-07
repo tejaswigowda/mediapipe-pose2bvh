@@ -94,4 +94,6 @@ const camera = new Camera(document.getElementById("video"), {
     width: document.getElementById("video").width,
     height: document.getElementById("video").height
 });
-camera.start();
+setTimeout(() => {
+    camera.start();
+}, 5000);
